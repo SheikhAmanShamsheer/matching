@@ -1,5 +1,5 @@
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
-
+import { Renderer2 } from '@angular/core';
 @Component({
   selector: 'app-test',
   templateUrl: './test.component.html',
@@ -10,21 +10,34 @@ export class TestComponent implements OnInit{
     this.addQuestion();
     this.addAnswer();
   }
+  private canvasWidth = 50;
   private _question = new Map();
   private _answer = new Map();
   private index = 1;
   private ansIndex = 1;
+  private canvasIncreaseFactor = 40;
   
+
+
+  constructor(private renderer: Renderer2) {}
+
 
   
   addQuestion(){ 
     this._question.set(this.index, "");
     let row = document.createElement('div');   
       row.className = `row-${this.index}`; 
+      row.style.display = "flex";
       row.innerHTML = ` 
-      <input type="text" id="input-${this.index}">
-      <button id="btn-${this.index}" ">delete</button>
-    `; 
+        <input type="text" id="input-${this.index}" style="width:278px; height:34px">
+        <button id="btn-${this.index}" style="border: none;
+                                              background: none;
+                                              cursor: pointer;
+                                              margin: 0;
+                                              padding: 0;">
+          <span class="material-icons" >delete</span>
+        </button>
+      `; 
       const inputElement = row.querySelector(`#input-${this.index}`) as HTMLInputElement;
       inputElement.addEventListener('input', (event) => {
         this.handleInputChange(event, inputElement.id);
@@ -35,17 +48,27 @@ export class TestComponent implements OnInit{
       });
       document.querySelector('.questionInputField')!.appendChild(row);
       this.index++;
+      this.canvasWidth += this.canvasIncreaseFactor;
       this.draw(); 
   } 
 
   addAnswer(){ 
     this._answer.set(this.ansIndex, "");
-    let row = document.createElement('div');   
+    let row = document.createElement('div');  
+    row.style.display = "flex"; 
       row.className = `row-${this.ansIndex}`; 
+      // row.innerHTML = ` 
+      //   <input type="text" id="input-${this.ansIndex}" style="width:278px; height:34px">
+      //   <button id="btn-${this.ansIndex}" ">delete</button>
+      // `; 
       row.innerHTML = ` 
-        <input type="text" id="input-${this.ansIndex}">
-        <button id="btn-${this.ansIndex}" ">delete</button>
-      `; 
+        <input type="text" id="input-${this.ansIndex}" style="width:278px; height:34px">
+        <button id="btn-${this.ansIndex}" style="border: none;
+    background: none;
+    cursor: pointer;
+    margin: 0;
+    padding: 0;" ><span class="material-icons span" >delete</span></button>
+      `;
       const inputElement = row.querySelector(`#input-${this.ansIndex}`) as HTMLInputElement;
       inputElement.addEventListener('input', (event) => {
         this.handleInputChange(event, inputElement.id,"answer");
@@ -56,6 +79,7 @@ export class TestComponent implements OnInit{
       });
       document.querySelector('.answerInputField')!.appendChild(row);
       this.ansIndex++;
+      this.canvasWidth += this.canvasIncreaseFactor;
       this.draw(); 
   }
 
@@ -99,7 +123,7 @@ export class TestComponent implements OnInit{
     let context = c?.getContext("2d");
     context?.clearRect(0,0,c!.width,c!.height);
     c!.width = window.innerWidth;
-    c!.height = 600;
+    c!.height = this.canvasWidth;
     this.drawCanvas(context);
     this.drawCanvasAns(context);
   }
@@ -109,26 +133,27 @@ export class TestComponent implements OnInit{
     let arr = Array.from(this._question.values());
     for(let i=0;i<arr.length;i++){
       context!.fillStyle = "black";
-      context?.rect(x+0.5,y+0.5,100,30);
-      context?.fillText(arr[i],x+30,y+15);
+      context?.rect(x+0.5,y+0.5,278,34);
+      context?.fillText(arr[i],x,y+15);
       context?.stroke();
       context?.beginPath();
-      context?.arc(x+120,y+15,12,0,360);
+      context?.arc(x+300,y+15,12,0,360);
       context?.stroke();
       y += 40;
     }
   }
   drawCanvasAns(context: CanvasRenderingContext2D | null | undefined){
-    let x = 300;
+    let x = 500;
     let y = 0;
     let arr = Array.from(this._answer.values());
     for(let i=0;i<arr.length;i++){
-      context!.fillStyle = "black";
-      context?.rect(x+0.5,y+0.5,100,30);
-      context?.fillText(arr[i],x+30,y+15);
+      context?.beginPath();
+      context?.arc(x,y+15,12,0,360);
       context?.stroke();
       context?.beginPath();
-      context?.arc(x+120,y+15,12,0,360);
+      context!.fillStyle = "black";
+      context?.rect(x+0.5+20,y+0.5,278,34);
+      context?.fillText(arr[i],x+30,y+15);
       context?.stroke();
       y += 40;
     }
