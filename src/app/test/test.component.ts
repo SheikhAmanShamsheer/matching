@@ -1,40 +1,127 @@
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { Renderer2 } from '@angular/core';
+import { stimulus } from './stimulusModel';
+import { response } from './responseModel';
+
 @Component({
   selector: 'app-test',
   templateUrl: './test.component.html',
   styleUrls: ['./test.component.css']
 })
-export class TestComponent implements OnInit{
-  ngOnInit(): void {
-    this.addQuestion();
-    this.addAnswer();
-  }
+export class TestComponent implements OnInit,AfterViewInit{
+
   private canvasWidth = 50;
   private _question = new Map();
   private _answer = new Map();
   private index = 1;
   private ansIndex = 1;
   private canvasIncreaseFactor = 40;
-  
+  private width = 278;
+  private heigth = 34;
+  private radius = 12;
+  private modelList = new Array();
+  private drawing = 0;
+  private startPoint = new Array(3);
+  private endPoint = new Array(3);
+  private ansIds = 1;
+  private questionIds = 1;
+  private matchedPairs = new Map();
+  private isMoving = 0;  
+  constructor(private renderer: Renderer2, private elementRef:ElementRef) {}
+  private deleteIds = new Array();
+  private deleteIdsAns = new Array();
+  private oldlist = new Array();
+  private deleted = "";
 
 
-  constructor(private renderer: Renderer2) {}
+
+  ngAfterViewInit(): void {
+    this.elementRef.nativeElement.querySelector('canvas')
+                                .addEventListener('mousedown', this.onMouseDown.bind(this));
+    this.elementRef.nativeElement.querySelector('canvas')
+                                .addEventListener('mousemove', this.onMouseMove.bind(this));
+  }
 
 
+  ngOnInit(): void {
+    this.addQuestion();
+    this.addAnswer();
+  }
+
+  reset(){
+    this.matchedPairs = new Map();
+    this.startPoint = new Array(3);
+    this.endPoint = new Array(3);
+    this.draw();
+  }
+
+  onMouseDown(e: any) {
+    e.preventDefault();
+    let c = document.querySelector('canvas');
+    const rect = c?.getBoundingClientRect();
+    let x = e.clientX-rect?.left!;
+    let y = e.clientY-rect?.top!;
+    for(let i=0;i<this.modelList.length;i++){
+      let d = Math.sqrt(((x-this.modelList[i].circleX)**2)+((y-this.modelList[i].circleY)**2));
+      if(d < this.modelList[i].radius){
+        if(this.drawing === 0){
+          this.drawing = 1;
+          this.startPoint[0] = this.modelList[i].circleX;
+          this.startPoint[1] = this.modelList[i].circleY;
+          this.startPoint[2] = this.modelList[i].id;
+          console.log("start: ",this.startPoint);
+          this.matchedPairs.set(this.startPoint,this.startPoint);
+          this.draw();
+          break;
+        }else if(this.drawing === 1){
+          if(this.modelList[i].circleX != this.startPoint[0]){
+            this.drawing = 0;
+            this.endPoint[0] = this.modelList[i].circleX;
+            this.endPoint[1] = this.modelList[i].circleY;
+            this.endPoint[2] = this.modelList[i].id;
+            console.log("end: ",this.endPoint);
+            this.matchedPairs.set(this.startPoint,this.endPoint);
+            this.startPoint = new Array(3);
+            this.endPoint = new Array(3);
+            this.isMoving = 0;
+            this.draw();
+            break;
+          }
+          
+        }
+      }else{
+        // console.log("outside");
+      }
+    }
+  }
+
+  onMouseMove(e: any) {
+    if(this.drawing === 1) {
+      this.isMoving = 1;
+      let c = document.querySelector('canvas');
+      const rect = c?.getBoundingClientRect();
+      let x = e.clientX-rect!.left;
+      let y = e.clientY-rect!.top;
+      this.matchedPairs.set(this.startPoint,[x,y]);
+      this.draw();
+    }
+  }
   
   addQuestion(){ 
     this._question.set(this.index, "");
     let row = document.createElement('div');   
       row.className = `row-${this.index}`; 
       row.style.display = "flex";
+      row.style.marginBottom = "12px";
       row.innerHTML = ` 
-        <input type="text" id="input-${this.index}" style="width:278px; height:34px">
+        <input type="textarea" id="input-${this.index}" style="width:278px; height:34px">
         <button id="btn-${this.index}" style="border: none;
                                               background: none;
                                               cursor: pointer;
                                               margin: 0;
-                                              padding: 0;">
+                                              padding: 0;
+                                              margin-left:5px;
+                                              color:blue;">
           <span class="material-icons" >delete</span>
         </button>
       `; 
@@ -56,19 +143,19 @@ export class TestComponent implements OnInit{
     this._answer.set(this.ansIndex, "");
     let row = document.createElement('div');  
     row.style.display = "flex"; 
-      row.className = `row-${this.ansIndex}`; 
-      // row.innerHTML = ` 
-      //   <input type="text" id="input-${this.ansIndex}" style="width:278px; height:34px">
-      //   <button id="btn-${this.ansIndex}" ">delete</button>
-      // `; 
-      row.innerHTML = ` 
-        <input type="text" id="input-${this.ansIndex}" style="width:278px; height:34px">
-        <button id="btn-${this.ansIndex}" style="border: none;
-    background: none;
-    cursor: pointer;
-    margin: 0;
-    padding: 0;" ><span class="material-icons span" >delete</span></button>
-      `;
+    row.className = `row-${this.ansIndex}`; 
+    row.style.marginBottom = "12px";
+    row.innerHTML = ` 
+      <input type="text" id="input-${this.ansIndex}" style="width:278px; height:34px">
+      <button id="btn-${this.ansIndex}" style="border: none;
+                                                background: none;
+                                                cursor: pointer;
+                                                margin: 0;
+                                                padding: 0;
+                                                margin-left:5px;
+                                                color:blue;" >
+      <span class="material-icons span" >delete</span></button>
+    `;
       const inputElement = row.querySelector(`#input-${this.ansIndex}`) as HTMLInputElement;
       inputElement.addEventListener('input', (event) => {
         this.handleInputChange(event, inputElement.id,"answer");
@@ -77,7 +164,7 @@ export class TestComponent implements OnInit{
       btnElement.addEventListener('click', (event) => {
         if(this._answer.size > 1) this.removeInput(btnElement.id,"answer");
       });
-      document.querySelector('.answerInputField')!.appendChild(row);
+      document.querySelector('.answerInputField')!.appendChild(row);  
       this.ansIndex++;
       this.canvasWidth += this.canvasIncreaseFactor;
       this.draw(); 
@@ -87,21 +174,50 @@ export class TestComponent implements OnInit{
     let numb = id.match(/\d/g);
     let temp = numb!.join("");
     let index = parseInt(temp);
+    console.log(index);
+    this.deleted = which;
+    for(let [k,v] of this.matchedPairs){
+      if(k[2] == index){
+        console.log("found",k);
+        this.matchedPairs.delete(k);
+        break;
+      }
+    }
     if(which == "answer"){
       let row = document.querySelector(`.answerInputField .row-${index}`)
       this._answer.delete(index);
       let mainDiv = document.querySelector('.answerInputField');
       mainDiv?.removeChild(row!);
+      this.deleteIdsAns.push(index);
     }else{
       let row = document.querySelector(`.questionInputField .row-${index}`)
       this._question.delete(index);
       let mainDiv = document.querySelector('.questionInputField');
       mainDiv?.removeChild(row!);
+      this.deleteIds.push(index);
     }
-    
     this.draw();
   }
 
+  updateStartAndEnd(){
+    for(let i=0;i<this.oldlist.length;i++){
+      for(let j=0;j<this.modelList.length;j++){
+        if(this.oldlist[i].type == this.modelList[j].type && this.oldlist[i].id == this.modelList[j].id && this.oldlist[i].y != this.modelList[j].y){
+          // console.log(this.oldlist[i],this.modelList[j]);
+          // console.log(this.matchedPairs);
+
+          for(let [k,v] of this.matchedPairs){
+            this.matchedPairs.set([k[0],this.modelList[j].circleY,this.modelList[j].id],v);
+            this.matchedPairs.delete(k);
+            break;
+          }
+          break;
+        }
+      }
+    }
+  }
+
+  
   
 
   handleInputChange(event: Event, index: string,which="question"){
@@ -124,38 +240,75 @@ export class TestComponent implements OnInit{
     context?.clearRect(0,0,c!.width,c!.height);
     c!.width = window.innerWidth;
     c!.height = this.canvasWidth;
+    this.oldlist = this.modelList;
     this.drawCanvas(context);
     this.drawCanvasAns(context);
+    this.updateStartAndEnd();
+    this.drawConnections(context);
   }
   drawCanvas(context: CanvasRenderingContext2D | null | undefined){
     let x = 0;
-    let y = 0;
+    let y = 10;
+    this.questionIds = 1;
+    this.modelList = [];
     let arr = Array.from(this._question.values());
     for(let i=0;i<arr.length;i++){
-      context!.fillStyle = "black";
-      context?.rect(x+0.5,y+0.5,278,34);
-      context?.fillText(arr[i],x,y+15);
-      context?.stroke();
-      context?.beginPath();
-      context?.arc(x+300,y+15,12,0,360);
-      context?.stroke();
+      while(this.deleteIds.includes(this.questionIds)){
+        this.questionIds++;
+      }
+      let s = new stimulus(this.questionIds,x,y,this.width,this.heigth,this.radius,arr[i]);
+      s.draw(context!);
+      this.modelList.push(s);
+      this.questionIds++;
       y += 40;
     }
   }
+
   drawCanvasAns(context: CanvasRenderingContext2D | null | undefined){
     let x = 500;
-    let y = 0;
+    let y = 10;
     let arr = Array.from(this._answer.values());
+    this.ansIds = 1;
     for(let i=0;i<arr.length;i++){
-      context?.beginPath();
-      context?.arc(x,y+15,12,0,360);
-      context?.stroke();
-      context?.beginPath();
-      context!.fillStyle = "black";
-      context?.rect(x+0.5+20,y+0.5,278,34);
-      context?.fillText(arr[i],x+30,y+15);
-      context?.stroke();
+      while(this.deleteIdsAns.includes(this.ansIds)){
+        this.ansIds++;
+      }
+      let r = new response(this.ansIds,x,y,this.width,this.heigth,this.radius,arr[i]);
+      r.draw(context!);
+      this.modelList.push(r);
+      this.ansIds++;
       y += 40;
     }
   }
+
+  drawConnections(context:  CanvasRenderingContext2D | null | undefined){
+    let arr : any = Array.from(this.matchedPairs);
+    for(let i=0;i<arr.length;i++){
+      let firstPoint = arr[i][0];
+      let secondPoint = arr[i][1];
+      this.drawCircle(context,firstPoint[0],firstPoint[1]);
+      if(!this.isMoving || i != arr.length-1){
+        this.drawCircle(context,secondPoint[0],secondPoint[1]);
+      }
+      this.drawLine(context,firstPoint[0],firstPoint[1],secondPoint[0],secondPoint[1]);
+    }
+  }
+
+  drawCircle(context:  CanvasRenderingContext2D | null | undefined,x:number,y:number){
+    context?.beginPath();
+    context?.arc(x,y,this.radius,0,360);
+    context!.fillStyle = "blue"
+    context?.fill();
+  }
+
+  drawLine(context:  CanvasRenderingContext2D | null | undefined,x1:number,y1:number,x2:number,y2:number){
+    context!.beginPath();
+    context!.moveTo(x1, y1);
+    context!.lineTo(x2, y2);
+    context!.strokeStyle = "blue";
+    context!.lineWidth = 2;
+    context!.stroke();
+  }
+
+  
 }
