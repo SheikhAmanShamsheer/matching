@@ -27,7 +27,8 @@ export class response{
         context?.beginPath();
         context!.fillStyle = "black";
         context?.rect(this.x+0.5+20,this.y+0.5,278,34);
-        context?.fillText(this.text,this.x+30,this.y+15);
+        context!.font = "20px Roboto";
+        context?.fillText(this.text,this.x+25,this.y+20);
         context?.stroke();
     }
 }

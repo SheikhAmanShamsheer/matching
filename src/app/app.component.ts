@@ -5,7 +5,7 @@ import { Component } from '@angular/core';
   template : `
   <app-header></app-header>
   <router-outlet ></router-outlet>
-  <app-footer></app-footer>
+  <app-footer style="padding: 100px;"></app-footer>
   `
 })
 export class AppComponent {

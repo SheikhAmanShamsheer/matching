@@ -24,7 +24,8 @@ export class stimulus{
     draw(context:CanvasRenderingContext2D){
         context!.fillStyle = "black";
         context?.rect(this.x+0.5,this.y+0.5,278,34);
-        context?.fillText(this.text,this.x+100,this.y+15);
+        context!.font = "20px Roboto";
+        context?.fillText(this.text,this.x+5,this.y+20);
         context?.stroke();
         context?.beginPath();
         context?.arc(this.circleX,this.circleY,this.radius,0,360);

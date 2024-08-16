@@ -27,13 +27,12 @@ export class TestComponent implements OnInit,AfterViewInit{
   private questionIds = 1;
   private matchedPairs = new Map();
   private isMoving = 0;  
-  constructor(private renderer: Renderer2, private elementRef:ElementRef) {}
+  
   private deleteIds = new Array();
   private deleteIdsAns = new Array();
   private oldlist = new Array();
-  private deleted = "";
-
-
+  private delete = 0;
+  private deltedObject = new Array(2);
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.querySelector('canvas')
@@ -42,16 +41,21 @@ export class TestComponent implements OnInit,AfterViewInit{
                                 .addEventListener('mousemove', this.onMouseMove.bind(this));
   }
 
+  constructor(private elementRef:ElementRef) {} 
 
   ngOnInit(): void {
     this.addQuestion();
     this.addAnswer();
+    // this.oneToOne.addEventListener('input', (event) => {
+    //   console.log(this.oneToOne.checked);
+    // });
   }
 
   reset(){
     this.matchedPairs = new Map();
     this.startPoint = new Array(3);
     this.endPoint = new Array(3);
+    this.modelList = new Array();
     this.draw();
   }
 
@@ -72,7 +76,6 @@ export class TestComponent implements OnInit,AfterViewInit{
           console.log("start: ",this.startPoint);
           this.matchedPairs.set(this.startPoint,this.startPoint);
           this.draw();
-          break;
         }else if(this.drawing === 1){
           if(this.modelList[i].circleX != this.startPoint[0]){
             this.drawing = 0;
@@ -174,44 +177,75 @@ export class TestComponent implements OnInit,AfterViewInit{
     let numb = id.match(/\d/g);
     let temp = numb!.join("");
     let index = parseInt(temp);
-    console.log(index);
-    this.deleted = which;
-    for(let [k,v] of this.matchedPairs){
-      if(k[2] == index){
-        console.log("found",k);
-        this.matchedPairs.delete(k);
-        break;
-      }
-    }
+    this.delete = 1;
     if(which == "answer"){
       let row = document.querySelector(`.answerInputField .row-${index}`)
       this._answer.delete(index);
       let mainDiv = document.querySelector('.answerInputField');
       mainDiv?.removeChild(row!);
       this.deleteIdsAns.push(index);
+      this.deltedObject[0] = index;
+      this.deltedObject[1] = "response";
     }else{
       let row = document.querySelector(`.questionInputField .row-${index}`)
       this._question.delete(index);
       let mainDiv = document.querySelector('.questionInputField');
       mainDiv?.removeChild(row!);
       this.deleteIds.push(index);
+      this.deltedObject[0] = index;
+      this.deltedObject[1] = "stimulus";
     }
+    this.canvasWidth -= this.canvasIncreaseFactor;
+
     this.draw();
   }
 
   updateStartAndEnd(){
-    for(let i=0;i<this.oldlist.length;i++){
-      for(let j=0;j<this.modelList.length;j++){
-        if(this.oldlist[i].type == this.modelList[j].type && this.oldlist[i].id == this.modelList[j].id && this.oldlist[i].y != this.modelList[j].y){
-          // console.log(this.oldlist[i],this.modelList[j]);
-          // console.log(this.matchedPairs);
-
-          for(let [k,v] of this.matchedPairs){
-            this.matchedPairs.set([k[0],this.modelList[j].circleY,this.modelList[j].id],v);
-            this.matchedPairs.delete(k);
-            break;
-          }
-          break;
+    console.log("old: ",this.oldlist);
+    console.log("new: ",this.modelList);
+    console.log("pairs: ",this.matchedPairs);
+    console.log("deleted One: ",this.deltedObject);
+    if(this.deltedObject[1] == "stimulus"){
+      for(let [k,v] of this.matchedPairs){
+        if((k[0] == 300 && k[2] == this.deltedObject[0]) || (v[0] == 300 && v[2] == this.deltedObject[0])){
+          this.matchedPairs.delete(k);
+        }
+      }
+    }else{
+      for(let [k,v] of this.matchedPairs){
+        if((k[0] == 500 && k[2] == this.deltedObject[0]) || (v[0] == 500 && v[2] == this.deltedObject[0])){
+          this.matchedPairs.delete(k);
+        }
+      }
+    }
+    let newlyAdded = new Map();
+    if(this.deltedObject[1] == "stimulus"){
+      for(let [k,v] of this.matchedPairs){
+        if((k[0] == 300 && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
+          this.matchedPairs.delete(k);
+          let key = [k[0],k[1]-40,k[2]];
+          this.matchedPairs.set(key,v);
+          newlyAdded.set(key,v);
+        }else if(v[0] == 300 && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
+          console.log("down");
+          this.matchedPairs.delete(k);
+          let value = [v[0],v[1]-40,v[2]];
+          this.matchedPairs.set(k,value);
+          newlyAdded.set(k,value);
+        }
+      }
+    }else{
+      for(let [k,v] of this.matchedPairs){
+        if((k[0] == 500 && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
+          this.matchedPairs.delete(k);
+          let key = [k[0],k[1]-40,k[2]];
+          this.matchedPairs.set(key,v);
+          newlyAdded.set(key,v);
+        }else if(v[0] == 500 && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
+          this.matchedPairs.delete(k);
+          let value = [v[0],v[1]-40,v[2]];
+          this.matchedPairs.set(k,value);
+          newlyAdded.set(k,value);
         }
       }
     }
@@ -243,7 +277,10 @@ export class TestComponent implements OnInit,AfterViewInit{
     this.oldlist = this.modelList;
     this.drawCanvas(context);
     this.drawCanvasAns(context);
-    this.updateStartAndEnd();
+    if(this.delete){
+      this.updateStartAndEnd();
+      this.delete = 0;
+    }
     this.drawConnections(context);
   }
   drawCanvas(context: CanvasRenderingContext2D | null | undefined){
