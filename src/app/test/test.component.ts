@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
 import { Renderer2 } from '@angular/core';
 import { stimulus } from './stimulusModel';
 import { response } from './responseModel';
+import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
 
 @Component({
   selector: 'app-test',
@@ -27,18 +28,37 @@ export class TestComponent implements OnInit,AfterViewInit{
   private questionIds = 1;
   private matchedPairs = new Map();
   private isMoving = 0;  
-  
+  private oneToOneChecked = true;
+  private manyToManyChecked = false;
   private deleteIds = new Array();
   private deleteIdsAns = new Array();
   private oldlist = new Array();
   private delete = 0;
   private deltedObject = new Array(2);
+  private included = new Array();
+  private numberOfTimes = new Map();
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.querySelector('canvas')
                                 .addEventListener('mousedown', this.onMouseDown.bind(this));
     this.elementRef.nativeElement.querySelector('canvas')
                                 .addEventListener('mousemove', this.onMouseMove.bind(this));
+    const OneToOne = document.querySelector(`#OneToOne`) as HTMLInputElement;
+    console.log(OneToOne.checked);
+    const ManyToMany = document.querySelector(`#ManyToMany`) as HTMLInputElement;
+    console.log(ManyToMany.checked);
+    OneToOne.addEventListener('click',(event)=>{
+      console.log(OneToOne.checked);
+      this.oneToOneChecked = !this.oneToOneChecked;
+      this.manyToManyChecked = !this.manyToManyChecked;
+      this.reset();
+    })
+    ManyToMany.addEventListener('click',(event)=>{
+      console.log(ManyToMany.checked);
+      this.manyToManyChecked = !this.manyToManyChecked;
+      this.oneToOneChecked = !this.oneToOneChecked;
+      this.reset();
+    })
   }
 
   constructor(private elementRef:ElementRef) {} 
@@ -46,9 +66,6 @@ export class TestComponent implements OnInit,AfterViewInit{
   ngOnInit(): void {
     this.addQuestion();
     this.addAnswer();
-    // this.oneToOne.addEventListener('input', (event) => {
-    //   console.log(this.oneToOne.checked);
-    // });
   }
 
   reset(){
@@ -56,6 +73,9 @@ export class TestComponent implements OnInit,AfterViewInit{
     this.startPoint = new Array(3);
     this.endPoint = new Array(3);
     this.modelList = new Array();
+    this.included = new Array();
+    this.numberOfTimes = new Map();
+    this.drawing = 0;
     this.draw();
   }
 
@@ -69,31 +89,71 @@ export class TestComponent implements OnInit,AfterViewInit{
       let d = Math.sqrt(((x-this.modelList[i].circleX)**2)+((y-this.modelList[i].circleY)**2));
       if(d < this.modelList[i].radius){
         if(this.drawing === 0){
-          this.drawing = 1;
           this.startPoint[0] = this.modelList[i].circleX;
           this.startPoint[1] = this.modelList[i].circleY;
           this.startPoint[2] = this.modelList[i].id;
           console.log("start: ",this.startPoint);
-          this.matchedPairs.set(this.startPoint,this.startPoint);
-          this.draw();
+          const exists = this.included.some(subArr => 
+            subArr.length === this.startPoint.length && 
+            subArr.every((val: any, index: number) => val === this.startPoint[index])
+          );          
+          console.log(exists,this.numberOfTimes.get(JSON.stringify(this.startPoint)),Math.min(this._question.size,this._answer.size));
+          if((this.oneToOneChecked && !exists)){
+            this.drawing = 1;
+            this.matchedPairs.set(this.startPoint,this.startPoint);
+            this.included.push([...this.startPoint]);
+            this.draw();
+            break;
+          }else if(this.manyToManyChecked && this.numberOfTimes.get(JSON.stringify(this.startPoint))==undefined ? 0 < Math.min(this._question.size,this._answer.size) : this.numberOfTimes.get(JSON.stringify(this.startPoint))  < Math.min(this._question.size,this._answer.size )){
+            this.drawing = 1;
+            this.matchedPairs.set(this.startPoint,this.startPoint);
+            this.included.push([...this.startPoint]);
+            this.numberOfTimes.set(JSON.stringify(this.startPoint),this.numberOfTimes.get(JSON.stringify(this.startPoint))==undefined ? 1 : this.numberOfTimes.get(JSON.stringify(this.startPoint))+1);
+            console.log("added: ",this.numberOfTimes);
+            this.draw();
+            break;
+          }else{
+            break;
+          }
         }else if(this.drawing === 1){
           if(this.modelList[i].circleX != this.startPoint[0]){
-            this.drawing = 0;
             this.endPoint[0] = this.modelList[i].circleX;
             this.endPoint[1] = this.modelList[i].circleY;
             this.endPoint[2] = this.modelList[i].id;
-            console.log("end: ",this.endPoint);
-            this.matchedPairs.set(this.startPoint,this.endPoint);
-            this.startPoint = new Array(3);
-            this.endPoint = new Array(3);
-            this.isMoving = 0;
-            this.draw();
-            break;
+            const exists = this.included.some(subArr => 
+              subArr.length === this.endPoint.length && 
+              subArr.every((val: any, index: number) => val === this.endPoint[index])
+            );          
+            if(this.oneToOneChecked && !exists){
+              this.drawing = 0;
+              console.log("end: ",this.endPoint);
+              this.included.push(this.endPoint);
+              this.matchedPairs.set(this.startPoint,this.endPoint);
+              this.startPoint = new Array(3);
+              this.endPoint = new Array(3);
+              this.isMoving = 0;
+              this.draw();
+              break;
+            }else if(this.manyToManyChecked && this.numberOfTimes.get(JSON.stringify(this.endPoint))==undefined ? 0 < Math.min(this._question.size,this._answer.size) : this.numberOfTimes.get(JSON.stringify(this.endPoint))  < Math.min(this._question.size,this._answer.size )){
+              console.log("inside else");
+              this.drawing = 0;
+              console.log("end: ",this.endPoint);
+              this.included.push(this.endPoint);
+              this.matchedPairs.set(this.startPoint,this.endPoint);
+              this.numberOfTimes.set(JSON.stringify(this.endPoint),this.numberOfTimes.get(JSON.stringify(this.endPoint))==undefined ? 1 : this.numberOfTimes.get(JSON.stringify(this.endPoint))+1);
+              console.log("added end: ",this.numberOfTimes);
+              this.startPoint = new Array(3);
+              this.endPoint = new Array(3);
+              this.isMoving = 0;
+              this.draw();
+              break;
+            } else{
+              break;
+            }
           }
           
         }
       }else{
-        // console.log("outside");
       }
     }
   }
@@ -101,6 +161,7 @@ export class TestComponent implements OnInit,AfterViewInit{
   onMouseMove(e: any) {
     if(this.drawing === 1) {
       this.isMoving = 1;
+      
       let c = document.querySelector('canvas');
       const rect = c?.getBoundingClientRect();
       let x = e.clientX-rect!.left;
@@ -173,6 +234,14 @@ export class TestComponent implements OnInit,AfterViewInit{
       this.draw(); 
   }
 
+  removeIncluded(target:number[]){
+    const index = this.included.findIndex(subArr => 
+      subArr.length === target.length && 
+      subArr.every((val: number, index: number) => val === target[index])
+    );
+    this.included.splice(index,index);
+  }
+
   removeInput(id:string,which="question"){
     let numb = id.match(/\d/g);
     let temp = numb!.join("");
@@ -196,8 +265,8 @@ export class TestComponent implements OnInit,AfterViewInit{
       this.deltedObject[1] = "stimulus";
     }
     this.canvasWidth -= this.canvasIncreaseFactor;
-
     this.draw();
+    console.log(this.numberOfTimes);
   }
 
   updateStartAndEnd(){
@@ -209,12 +278,24 @@ export class TestComponent implements OnInit,AfterViewInit{
       for(let [k,v] of this.matchedPairs){
         if((k[0] == 300 && k[2] == this.deltedObject[0]) || (v[0] == 300 && v[2] == this.deltedObject[0])){
           this.matchedPairs.delete(k);
+          this.removeIncluded(k);
+          this.removeIncluded(v);
+          if(this.manyToManyChecked){
+            this.numberOfTimes.set(JSON.stringify(k),this.numberOfTimes.get(JSON.stringify(k))-1);
+            this.numberOfTimes.set(JSON.stringify(v),this.numberOfTimes.get(JSON.stringify(v))-1);
+          }
         }
       }
     }else{
       for(let [k,v] of this.matchedPairs){
         if((k[0] == 500 && k[2] == this.deltedObject[0]) || (v[0] == 500 && v[2] == this.deltedObject[0])){
           this.matchedPairs.delete(k);
+          this.removeIncluded(k);
+          this.removeIncluded(v);
+          if(this.manyToManyChecked){
+            this.numberOfTimes.set(JSON.stringify(k),this.numberOfTimes.get(JSON.stringify(k))-1);
+            this.numberOfTimes.set(JSON.stringify(v),this.numberOfTimes.get(JSON.stringify(v))-1);
+          }
         }
       }
     }
@@ -223,14 +304,28 @@ export class TestComponent implements OnInit,AfterViewInit{
       for(let [k,v] of this.matchedPairs){
         if((k[0] == 300 && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
           this.matchedPairs.delete(k);
+          this.removeIncluded(k);
           let key = [k[0],k[1]-40,k[2]];
+          if(this.manyToManyChecked){
+            this.numberOfTimes.set(JSON.stringify(key),this.numberOfTimes.get(JSON.stringify(k))-1);
+            this.numberOfTimes.set(JSON.stringify(v),this.numberOfTimes.get(JSON.stringify(v))-1);
+            this.numberOfTimes.delete(k);
+          }
           this.matchedPairs.set(key,v);
+          this.included.push(key);
           newlyAdded.set(key,v);
         }else if(v[0] == 300 && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
           console.log("down");
           this.matchedPairs.delete(k);
+          this.removeIncluded(v);
           let value = [v[0],v[1]-40,v[2]];
+          if(this.manyToManyChecked){
+            this.numberOfTimes.set(JSON.stringify(k),this.numberOfTimes.get(JSON.stringify(k))-1);
+            this.numberOfTimes.set(JSON.stringify(value),this.numberOfTimes.get(JSON.stringify(v))-1);
+            this.numberOfTimes.delete(v);
+          }
           this.matchedPairs.set(k,value);
+          this.included.push(value);
           newlyAdded.set(k,value);
         }
       }
@@ -238,13 +333,27 @@ export class TestComponent implements OnInit,AfterViewInit{
       for(let [k,v] of this.matchedPairs){
         if((k[0] == 500 && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
           this.matchedPairs.delete(k);
+          this.removeIncluded(k);
           let key = [k[0],k[1]-40,k[2]];
+          if(this.manyToManyChecked){
+            this.numberOfTimes.set(JSON.stringify(key),this.numberOfTimes.get(JSON.stringify(k))-1);
+            this.numberOfTimes.set(JSON.stringify(v),this.numberOfTimes.get(JSON.stringify(v))-1);
+            this.numberOfTimes.delete(k);
+          }
           this.matchedPairs.set(key,v);
+          this.included.push(key);
           newlyAdded.set(key,v);
         }else if(v[0] == 500 && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
           this.matchedPairs.delete(k);
+          this.removeIncluded(v);
           let value = [v[0],v[1]-40,v[2]];
+          if(this.manyToManyChecked){
+            this.numberOfTimes.set(JSON.stringify(k),this.numberOfTimes.get(JSON.stringify(k))-1);
+            this.numberOfTimes.set(JSON.stringify(value),this.numberOfTimes.get(JSON.stringify(v))-1);
+            this.numberOfTimes.delete(v);
+          }
           this.matchedPairs.set(k,value);
+          this.included.push(value);
           newlyAdded.set(k,value);
         }
       }

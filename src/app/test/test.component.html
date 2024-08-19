@@ -1,16 +1,19 @@
 <div style="width: 800px; margin-left: auto; margin-right: auto;">
 
-<div class="main" style="display: flex; justify-content: space-between;">
-    <div class="questionInputField"></div> 
-    <div class="answerInputField" style="margin-left: 80px;"></div> 
-</div>
-<div style="display: flex; flex-direction:row; ">
-    <button (click)="addQuestion()" style="width: 100px; height: 40px; margin-top: 10px;">Add Stimulus</button>
-    <button (click)="addAnswer()" style="width: 100px; height: 40px; margin-left: 390px; margin-top: 10px;">Add Response</button>
+    <div class="main" style="display: flex; justify-content: space-between;">
+        <div class="questionInputField"></div>
+        <div class="answerInputField" style="margin-left: 80px;"></div>
+    </div>
+    <div style="display: flex; flex-direction:row; ">
+        <button (click)="addQuestion()" style="width: 100px; height: 40px; margin-top: 10px;">Add Stimulus</button>
+        <button (click)="addAnswer()" style="width: 100px; height: 40px; margin-left: 390px; margin-top: 10px;">Add
+            Response</button>
 
-</div>
-<input type="radio" value="One-to-One">
-<input type="radio" value="Many-to-Many">
-<button (click)="reset()"><mat-icon>restore</mat-icon>reset</button>
-<canvas id="canvas" style="margin-top: 20px;"></canvas>
+    </div>
+    <div>
+        <label for="OneToOne">One To One</label><input type="radio" name="option" id="OneToOne" checked="checked">
+        <label for="ManyToMany">Many To Many</label><input type="radio" name="option" id="ManyToMany">
+    </div>
+    <button (click)="reset()">reset</button>
+    <canvas id="canvas" style="margin-top: 20px;"></canvas>
 </div>
