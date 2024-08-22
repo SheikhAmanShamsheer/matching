@@ -18,14 +18,15 @@ export class stimulus{
         this.heigth = heigth;
         this.radius = radius;
         this.text = text;
-        this.circleX = this.x+300;
-        this.circleY = this.y+15
+        this.circleX = this.x+this.width+22;
+        this.circleY = this.y+this.heigth/2;
+        
     }
     draw(context:CanvasRenderingContext2D){
         context!.fillStyle = "black";
-        context?.rect(this.x+0.5,this.y+0.5,278,34);
+        context?.rect(this.x,this.y,this.width,this.heigth);
         context!.font = "20px Roboto";
-        context?.fillText(this.text,this.x+5,this.y+20);
+        context?.fillText(this.text,this.x,this.y+this.heigth/2);
         context?.stroke();
         context?.beginPath();
         context?.arc(this.circleX,this.circleY,this.radius,0,360);

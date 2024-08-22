@@ -1,4 +1,59 @@
-/* button{
-    border: none;background: none;cursor: pointer;; 
-      padding: 0;
-} */
+.enterquestion{
+  width: 800px;
+  margin-bottom: 20px;
+  border:none;
+  border-bottom: 2px solid grey;
+  padding: 5px;
+}
+
+.labeldiv{
+  display: flex;
+  justify-content: space-between;
+}
+
+#labels{
+  width: 305px;
+  margin-bottom: 20px;
+  border:none;
+  border-bottom: 2px solid grey;
+  padding: 5px;
+}
+
+input:focus{
+  outline: none;
+}
+
+.canvasHeaders{
+  display: flex;
+  justify-content: space-between;
+}
+
+#canvaslabels{
+  width: 305px;
+}
+
+.canvasDiv{
+  background-color: rgba(63,139,210,0.2);
+
+}
+
+.shuffleDiv{
+  display: flex;
+  margin-bottom: 40px;
+  margin-left: 20px;
+}
+
+.canvasBottom{
+  display: flex;
+  justify-content: space-between;
+}
+
+.reset{
+  margin-right: 20px;
+  margin-bottom: 40px;
+}
+hr{
+  width: 760px;
+  margin-left: auto;
+  margin-right: auto;
+}

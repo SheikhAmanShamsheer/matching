@@ -1,19 +1,44 @@
-<div style="width: 800px; margin-left: auto; margin-right: auto;">
+<div style="width: 800px; margin: 40px auto 193px auto;">
+    <!-- margin-left: auto; margin-right: auto; margin-top: 40px;  -->
 
+    <div>
+        <div style="display: flex; justify-content: space-between;">
+            <label for="">Question(stem)*</label>
+            <label for="" >*Fields are required</label>
+        </div>
+        <input class="enterquestion" type="text" placeholder="Enter Question (Stem)" >
+    </div>
+    <div class="labeldiv">
+        <input id="labels" type="text" placeholder="Stimulus Label">
+        <input id="labels" type="text" placeholder="Response Label">
+    </div>
     <div class="main" style="display: flex; justify-content: space-between;">
         <div class="questionInputField"></div>
-        <div class="answerInputField" style="margin-left: 80px;"></div>
+        <div class="answerInputField"></div>
     </div>
     <div style="display: flex; flex-direction:row; ">
-        <button (click)="addQuestion()" style="width: 100px; height: 40px; margin-top: 10px;">Add Stimulus</button>
-        <button (click)="addAnswer()" style="width: 100px; height: 40px; margin-left: 390px; margin-top: 10px;">Add
+        <button (click)="addQuestion()" style="width: 130px; height: 40px; margin-top: 10px;">Add Stimulus</button>
+        <button (click)="addAnswer()" style="width: 130px; height: 40px; margin-left: 360px; margin-top: 10px;">Add
             Response</button>
 
     </div>
-    <div>
+    <div >
         <label for="OneToOne">One To One</label><input type="radio" name="option" id="OneToOne" checked="checked">
-        <label for="ManyToMany">Many To Many</label><input type="radio" name="option" id="ManyToMany">
+        <label for="ManyToMany" style="margin-left: 5px;">Many To Many</label><input type="radio" name="option" id="ManyToMany">
     </div>
-    <button (click)="reset()">reset</button>
-    <canvas id="canvas" style="margin-top: 20px;"></canvas>
+    <div class="canvasHeaders">
+        <label for="" id="canvaslabels">Stimulus List*</label>
+        <label for="" id="canvaslabels">Resposne List*</label>
+    </div>
+    <div class="canvasDiv">
+        <canvas id="canvas" width="800" height="130" style="width: 100%;"></canvas>
+        <hr>
+        <div class="canvasBottom">
+            <div class="shuffleDiv">
+                <input type="checkbox" name="shuffle" id="shuffle">
+                <label for="shuffle">Shuffle Responses</label>
+            </div>
+            <button class="reset" (click)="reset()">Reset</button>
+        </div>
+    </div>
 </div>

@@ -1,29 +1,11 @@
-html, body {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-}
-
 app-header {
     position: sticky;
     top: 0;
-    width: 100%;
     z-index: 1000; 
-    background-color: #fff; 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); 
-}
-
-app-footer {
-    margin-top: auto; 
-    width: 100%;
-    background-color: #fff; /* Adjust background as needed */
-    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1); /* Optional shadow for the footer */
-}
-
-/* Main content styling */
-router-outlet {
-    flex: 1; /* Make the router outlet take the remaining space */
-    padding: 20px; /* Optional padding */
-    overflow-y: auto; /* If content is long, allow scrolling */
-}
+  }
+  
+  /* router-outlet {
+    flex: 1; 
+  } */
+  
+ 

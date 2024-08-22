@@ -18,17 +18,17 @@ export class response{
         this.radius = radius;
         this.text = text;
         this.circleX = this.x;
-        this.circleY = this.y+15
+        this.circleY = this.y+15;
     }
     draw(context:CanvasRenderingContext2D){
         context?.beginPath();
-        context?.arc(this.circleX,this.circleY,12,0,360);
+        context?.arc(this.circleX+0.5,this.circleY+0.5,12,0,360);
         context?.stroke();
         context?.beginPath();
         context!.fillStyle = "black";
-        context?.rect(this.x+0.5+20,this.y+0.5,278,34);
+        context?.rect(this.x+20,this.y,this.width,this.heigth);
         context!.font = "20px Roboto";
-        context?.fillText(this.text,this.x+25,this.y+20);
+        context?.fillText(this.text,this.x+22,this.y+this.heigth/2);
         context?.stroke();
     }
 }

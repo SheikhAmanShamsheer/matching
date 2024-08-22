@@ -1,0 +1,25 @@
+.navbar {
+    background-image: url("src\\assets\\header pattern image.png");
+}
+
+.logImg{
+    margin-top: 10px;
+}
+
+
+.container-fluid{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.navUl{
+    display: flex;
+    flex-direction: row;
+}
+
+.nav-item{
+    list-style-type: none;
+    margin: 5px;
+    
+}

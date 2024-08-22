@@ -9,11 +9,11 @@ import { FooterModule } from './footer/footer.module';
 import { TestComponent } from './test/test.component';
 import { TestModule } from './test/test.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-
+// import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
     AppComponent,
-
+    
   ],
   imports: [
     BrowserModule,
@@ -21,7 +21,8 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     FooterModule,
     TestModule,
     AppRoutingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    // NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

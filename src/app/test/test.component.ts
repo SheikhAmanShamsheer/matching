@@ -11,7 +11,7 @@ import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
 })
 export class TestComponent implements OnInit,AfterViewInit{
 
-  private canvasWidth = 50;
+  private canvasHeight = 50;
   private _question = new Map();
   private _answer = new Map();
   private index = 1;
@@ -37,6 +37,12 @@ export class TestComponent implements OnInit,AfterViewInit{
   private deltedObject = new Array(2);
   private included = new Array();
   private numberOfTimes = new Map();
+  private stimulusStartX = 0;
+  private stimulusStartY = 0;
+  private responseStartX = 500;
+  private responseStartY = 10;
+
+  constructor(private elementRef:ElementRef) {} 
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.querySelector('canvas')
@@ -48,20 +54,17 @@ export class TestComponent implements OnInit,AfterViewInit{
     const ManyToMany = document.querySelector(`#ManyToMany`) as HTMLInputElement;
     console.log(ManyToMany.checked);
     OneToOne.addEventListener('click',(event)=>{
-      console.log(OneToOne.checked);
       this.oneToOneChecked = !this.oneToOneChecked;
       this.manyToManyChecked = !this.manyToManyChecked;
       this.reset();
     })
     ManyToMany.addEventListener('click',(event)=>{
-      console.log(ManyToMany.checked);
       this.manyToManyChecked = !this.manyToManyChecked;
       this.oneToOneChecked = !this.oneToOneChecked;
       this.reset();
     })
   }
 
-  constructor(private elementRef:ElementRef) {} 
 
   ngOnInit(): void {
     this.addQuestion();
@@ -82,9 +85,12 @@ export class TestComponent implements OnInit,AfterViewInit{
   onMouseDown(e: any) {
     e.preventDefault();
     let c = document.querySelector('canvas');
+    let ctx = c?.getContext("2d");
     const rect = c?.getBoundingClientRect();
     let x = e.clientX-rect?.left!;
     let y = e.clientY-rect?.top!;
+    console.log("clicked here: ",x,y);
+    console.log("modelList: ",this.modelList);
     for(let i=0;i<this.modelList.length;i++){
       let d = Math.sqrt(((x-this.modelList[i].circleX)**2)+((y-this.modelList[i].circleY)**2));
       if(d < this.modelList[i].radius){
@@ -174,33 +180,33 @@ export class TestComponent implements OnInit,AfterViewInit{
   addQuestion(){ 
     this._question.set(this.index, "");
     let row = document.createElement('div');   
-      row.className = `row-${this.index}`; 
-      row.style.display = "flex";
-      row.style.marginBottom = "12px";
-      row.innerHTML = ` 
-        <input type="textarea" id="input-${this.index}" style="width:278px; height:34px">
-        <button id="btn-${this.index}" style="border: none;
-                                              background: none;
-                                              cursor: pointer;
-                                              margin: 0;
-                                              padding: 0;
-                                              margin-left:5px;
-                                              color:blue;">
-          <span class="material-icons" >delete</span>
-        </button>
-      `; 
-      const inputElement = row.querySelector(`#input-${this.index}`) as HTMLInputElement;
-      inputElement.addEventListener('input', (event) => {
-        this.handleInputChange(event, inputElement.id);
-      });
-      const btnElement = row.querySelector(`#btn-${this.index}`) as HTMLInputElement;
-      btnElement.addEventListener('click', (event) => {
-        if(this._question.size > 1) this.removeInput(btnElement.id);
-      });
-      document.querySelector('.questionInputField')!.appendChild(row);
-      this.index++;
-      this.canvasWidth += this.canvasIncreaseFactor;
-      this.draw(); 
+    row.className = `row-${this.index}`; 
+    row.style.display = "flex";
+    row.style.marginBottom = "12px";
+    row.innerHTML = ` 
+      <textarea type="textarea" id="input-${this.index}" style="width:278px; height:34px; font-size:20px;resize:none;scrollbar-width: none;line-height:1"></textarea>
+      <button id="btn-${this.index}" style="border: none;
+                                            background: none;
+                                            cursor: pointer;
+                                            margin: 0;
+                                            padding: 0;
+                                            margin-left:5px;
+                                            color:blue;">
+        <span class="material-icons" >delete</span>
+      </button>
+    `; 
+    const inputElement = row.querySelector(`#input-${this.index}`) as HTMLInputElement;
+    inputElement.addEventListener('input', (event) => {
+      this.handleInputChange(event, inputElement.id);
+    });
+    const btnElement = row.querySelector(`#btn-${this.index}`) as HTMLInputElement;
+    btnElement.addEventListener('click', (event) => {
+      if(this._question.size > 1) this.removeInput(btnElement.id);
+    });
+    document.querySelector('.questionInputField')!.appendChild(row);
+    this.index++;
+    this.canvasHeight += this.canvasIncreaseFactor;
+    this.draw(); 
   } 
 
   addAnswer(){ 
@@ -210,7 +216,7 @@ export class TestComponent implements OnInit,AfterViewInit{
     row.className = `row-${this.ansIndex}`; 
     row.style.marginBottom = "12px";
     row.innerHTML = ` 
-      <input type="text" id="input-${this.ansIndex}" style="width:278px; height:34px">
+      <textarea type="text" id="input-${this.ansIndex}" style="width:278px; height:34px;resize:none;  font-size:20px;scrollbar-width: none;line-height:1"></textarea>
       <button id="btn-${this.ansIndex}" style="border: none;
                                                 background: none;
                                                 cursor: pointer;
@@ -220,18 +226,18 @@ export class TestComponent implements OnInit,AfterViewInit{
                                                 color:blue;" >
       <span class="material-icons span" >delete</span></button>
     `;
-      const inputElement = row.querySelector(`#input-${this.ansIndex}`) as HTMLInputElement;
-      inputElement.addEventListener('input', (event) => {
-        this.handleInputChange(event, inputElement.id,"answer");
-      });
-      const btnElement = row.querySelector(`#btn-${this.ansIndex}`) as HTMLInputElement;
-      btnElement.addEventListener('click', (event) => {
-        if(this._answer.size > 1) this.removeInput(btnElement.id,"answer");
-      });
-      document.querySelector('.answerInputField')!.appendChild(row);  
-      this.ansIndex++;
-      this.canvasWidth += this.canvasIncreaseFactor;
-      this.draw(); 
+    const inputElement = row.querySelector(`#input-${this.ansIndex}`) as HTMLInputElement;
+    inputElement.addEventListener('input', (event) => {
+      this.handleInputChange(event, inputElement.id,"answer");
+    });
+    const btnElement = row.querySelector(`#btn-${this.ansIndex}`) as HTMLInputElement;
+    btnElement.addEventListener('click', (event) => {
+      if(this._answer.size > 1) this.removeInput(btnElement.id,"answer");
+    });
+    document.querySelector('.answerInputField')!.appendChild(row);  
+    this.ansIndex++;
+    this.canvasHeight += this.canvasIncreaseFactor;
+    this.draw(); 
   }
 
   removeIncluded(target:number[]){
@@ -264,7 +270,7 @@ export class TestComponent implements OnInit,AfterViewInit{
       this.deltedObject[0] = index;
       this.deltedObject[1] = "stimulus";
     }
-    this.canvasWidth -= this.canvasIncreaseFactor;
+    this.canvasHeight -= this.canvasIncreaseFactor;
     this.draw();
     console.log(this.numberOfTimes);
   }
@@ -368,6 +374,7 @@ export class TestComponent implements OnInit,AfterViewInit{
     let temp = numb!.join("");
     let id = parseInt(temp);
     const inputValue = (event.target as HTMLInputElement).value;
+    console.log(inputValue);
     if(which == "answer"){
       this._answer.set(id,inputValue);
     }else{
@@ -380,9 +387,10 @@ export class TestComponent implements OnInit,AfterViewInit{
   draw(){
     let c = document.querySelector('canvas');
     let context = c?.getContext("2d");
-    context?.clearRect(0,0,c!.width,c!.height);
-    c!.width = window.innerWidth;
-    c!.height = this.canvasWidth;
+    c!.width = 800;
+    c!.height = this.canvasHeight;
+    c!.style.width = "800px";
+    // c!.style.height = this.canvasHeight;
     this.oldlist = this.modelList;
     this.drawCanvas(context);
     this.drawCanvasAns(context);
@@ -391,6 +399,7 @@ export class TestComponent implements OnInit,AfterViewInit{
       this.delete = 0;
     }
     this.drawConnections(context);
+
   }
   drawCanvas(context: CanvasRenderingContext2D | null | undefined){
     let x = 0;
