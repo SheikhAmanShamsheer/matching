@@ -1,8 +1,32 @@
+.body{
+  background-color: #EEEEEE;
+}
+
+.topL{
+  color: #666666;
+  opacity: 1;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.addBtn{
+  background: #E2F8FE 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border: 1px solid #7994B3;
+  border-radius: 2px;
+  opacity: 1;
+  margin-bottom: 50px;
+}
+
+.topBanner:hover{
+  cursor: pointer;
+}
+
 .enterquestion{
-  width: 800px;
+  width: 840px;
   margin-bottom: 20px;
   border:none;
-  border-bottom: 2px solid grey;
+  border-bottom: 2px solid rgb(198, 198, 198);
   padding: 5px;
 }
 
@@ -15,7 +39,7 @@
   width: 305px;
   margin-bottom: 20px;
   border:none;
-  border-bottom: 2px solid grey;
+  border-bottom: 2px solid rgb(198, 198, 198);
   padding: 5px;
 }
 
@@ -33,14 +57,22 @@ input:focus{
 }
 
 .canvasDiv{
-  background-color: rgba(63,139,210,0.2);
-
+  /* background-color: rgba(63,139,210,0.2); */
+  background-color: #F3FBFF;
+  width: 850px;
 }
 
 .shuffleDiv{
   display: flex;
   margin-bottom: 40px;
   margin-left: 20px;
+}
+
+#shuffle{
+  accent-color: #1F7A54;
+  width: 18px;
+  height: 24px;
+  margin-right: 5px;
 }
 
 .canvasBottom{
@@ -52,8 +84,86 @@ input:focus{
   margin-right: 20px;
   margin-bottom: 40px;
 }
-hr{
+.bottomHr{
   width: 760px;
   margin-left: auto;
   margin-right: auto;
+}
+
+.topHr{
+  width: 450px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.btn{
+  height: 30px;
+  width: 30px;
+  border-radius: 50%;
+  border: 1px solid black;
+  color: #2B5642;
+  background-color: #3FD28B;
+  padding: 2px;
+  margin-right: 5px ;
+}
+
+.topBanner{
+  width: 900px; 
+  margin: 30px auto 0px auto;
+  display: flex;
+  background-color: white;
+  padding: 10px;
+  /* padding-left: 0px; */
+}
+
+.bottomBody{
+  background-color: #fff;
+  padding: 30px;
+}
+
+p{
+  color: #666666;
+  opacity: 1;
+  margin: 0;
+  font-size: 10px;
+  margin-bottom: 5px;
+}
+
+.rad{
+  accent-color: #1F7A54;
+  opacity: 1;
+  width: 20px;
+  height: 24px;
+  margin-right: 3px;
+}
+
+.rl{
+  display: flex;
+
+}
+.mrl{
+  display: flex;
+  width: 35%;
+  justify-content: space-between;
+  margin-bottom: 70px;
+}
+
+label{
+  font-size: 16px;
+}
+
+.reset{
+  background: none;
+  color: #1F7A54;
+  opacity: 0.5;
+  outline: none;
+  border: none;
+  font-size: 14px;
+}
+
+.resetIcon{
+  color: #1F7A54;
+  opacity: 0.5;
+  width: 24px;
+  height: 24px;
 }

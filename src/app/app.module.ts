@@ -6,17 +6,17 @@ import { AppComponent } from './app.component';
 
 import { HeaderModule } from './header/header.module';
 import { FooterModule } from './footer/footer.module';
-import { TestComponent } from './test/test.component';
 import { TestModule } from './test/test.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { PropertiesModule } from './properties/properties.module';
 // import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 @NgModule({
   declarations: [
-    AppComponent,
-    
+    AppComponent,    
   ],
   imports: [
     BrowserModule,
+    PropertiesModule,
     HeaderModule,
     FooterModule,
     TestModule,

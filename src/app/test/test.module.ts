@@ -5,7 +5,6 @@ import { TestRoutingModule } from './test-routing.module';
 import { FormsModule } from '@angular/forms';
 import {MatIconModule} from '@angular/material/icon';
 
-
 @NgModule({
   declarations: [TestComponent],
   imports: [

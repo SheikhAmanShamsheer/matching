@@ -1,44 +1,63 @@
-<div style="width: 800px; margin: 40px auto 193px auto;">
-    <!-- margin-left: auto; margin-right: auto; margin-top: 40px;  -->
-
-    <div>
-        <div style="display: flex; justify-content: space-between;">
-            <label for="">Question(stem)*</label>
-            <label for="" >*Fields are required</label>
+<div class="body">
+    <div class="topBanner">
+        <div class="banner" routerLink="/">
+            <button class="btn">1</button>
+            <span>Question Properties</span>
         </div>
-        <input class="enterquestion" type="text" placeholder="Enter Question (Stem)" >
+        <hr class="topHr">
+        <div class="banner" routerLink="/test">
+            <button class="btn">2</button>
+            <span>Question Content</span>
+        </div>
     </div>
-    <div class="labeldiv">
-        <input id="labels" type="text" placeholder="Stimulus Label">
-        <input id="labels" type="text" placeholder="Response Label">
-    </div>
-    <div class="main" style="display: flex; justify-content: space-between;">
-        <div class="questionInputField"></div>
-        <div class="answerInputField"></div>
-    </div>
-    <div style="display: flex; flex-direction:row; ">
-        <button (click)="addQuestion()" style="width: 130px; height: 40px; margin-top: 10px;">Add Stimulus</button>
-        <button (click)="addAnswer()" style="width: 130px; height: 40px; margin-left: 360px; margin-top: 10px;">Add
-            Response</button>
-
-    </div>
-    <div >
-        <label for="OneToOne">One To One</label><input type="radio" name="option" id="OneToOne" checked="checked">
-        <label for="ManyToMany" style="margin-left: 5px;">Many To Many</label><input type="radio" name="option" id="ManyToMany">
-    </div>
-    <div class="canvasHeaders">
-        <label for="" id="canvaslabels">Stimulus List*</label>
-        <label for="" id="canvaslabels">Resposne List*</label>
-    </div>
-    <div class="canvasDiv">
-        <canvas id="canvas" width="800" height="130" style="width: 100%;"></canvas>
-        <hr>
-        <div class="canvasBottom">
-            <div class="shuffleDiv">
-                <input type="checkbox" name="shuffle" id="shuffle">
-                <label for="shuffle">Shuffle Responses</label>
+    <div class="bottomBody" style="width: 900px; margin: 40px auto 0px auto; ">
+        <div>
+            <div style="display: flex; justify-content: space-between;">
+                <label class="topL" for="">Question(stem)*</label>
+                <label class="topL" for="">*Fields are required</label>
             </div>
-            <button class="reset" (click)="reset()">Reset</button>
+            <input class="enterquestion" type="text" placeholder="Enter Question (Stem)">
+        </div>
+        <div class="labeldiv">
+            <input id="labels" type="text" placeholder="Stimulus Label">
+            <input id="labels" type="text" placeholder="Response Label">
+        </div>
+        <div class="main" style="display: flex; justify-content: space-between;">
+            <div class="questionInputField"></div>
+            <div class="answerInputField"></div>
+        </div>
+        <div style="display: flex; flex-direction:row; ">
+            <button class="addBtn" (click)="addQuestion()" style="width: 130px; height: 40px; margin-top: 10px;">Add Stimulus</button>
+            <button class="addBtn" (click)="addAnswer()" style="width: 130px; height: 40px; margin-left: 405px; margin-top: 10px;">Add
+                Response</button>
+                
+            </div>
+        <p>Collection Type*</p>
+        <div class="mrl">
+            <div class="rl">
+                <input type="radio" name="option" id="OneToOne" class="rad" checked="checked"><label  for="OneToOne">One To One</label>
+            </div>
+            <div class="rl">
+                <input type="radio" name="option" id="ManyToMany" class="rad"><label for="ManyToMany" style="margin-left: 5px;">Many To Many</label>
+            </div>
+        </div>
+        <!-- <div class="canvasHeaders">
+            <label for="" id="canvaslabels">Stimulus List*</label>
+            <label for="" id="canvaslabels">Resposne List*</label>
+        </div> -->
+        <p>Set Correct Answers*</p>
+        <div class="canvasDiv">
+            <canvas id="canvas" style="margin: 0px auto 0px auto;"></canvas>
+            <hr class="bottomHr">
+            <div class="canvasBottom">
+                <div class="shuffleDiv">
+                    <input type="checkbox" name="shuffle" id="shuffle">
+                    <label for="shuffle">Shuffle Responses</label>
+                </div>
+                <div style="display: flex;">
+                    <span class="material-icons resetIcon">replay</span><button class="reset" (click)="reset()">reset</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>

@@ -1,0 +1,40 @@
+.topBanner{
+    width: 900px; 
+    margin: 30px auto 480px auto;
+    display: flex;
+    justify-content: space-between;
+    background-color: white;
+    /* padding: 10px; */
+
+}
+
+.btn{
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    border: 1px solid black;
+    color: #2B5642;
+    background-color: #3FD28B;
+    padding: 2px;
+    margin-right: 5px ;
+}
+
+.topBanner:hover{
+    cursor: pointer;
+}
+
+.banner{
+    height: inherit;
+    padding: 10px;
+}
+
+.banner:hover{
+    background-color: #F5F5F5;
+}
+
+.topHr{
+    width: 450px;
+    /* margin-left: auto;
+    margin-right: auto; */
+    margin: auto;
+  }

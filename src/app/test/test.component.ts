@@ -37,10 +37,12 @@ export class TestComponent implements OnInit,AfterViewInit{
   private deltedObject = new Array(2);
   private included = new Array();
   private numberOfTimes = new Map();
-  private stimulusStartX = 0;
-  private stimulusStartY = 0;
-  private responseStartX = 500;
-  private responseStartY = 10;
+  private stimulusStartX = 10;
+  private stimulusStartXCircle = 300+this.stimulusStartX;
+
+  private stimulusStartY = 20;
+  private responseStartX = 540;
+  private responseStartY = 20;
 
   constructor(private elementRef:ElementRef) {} 
 
@@ -184,14 +186,14 @@ export class TestComponent implements OnInit,AfterViewInit{
     row.style.display = "flex";
     row.style.marginBottom = "12px";
     row.innerHTML = ` 
-      <textarea type="textarea" id="input-${this.index}" style="width:278px; height:34px; font-size:20px;resize:none;scrollbar-width: none;line-height:1"></textarea>
+      <textarea type="textarea" id="input-${this.index}" style="width:278px;padding:5px; height:34px; font-size:20px;resize:none;scrollbar-width: none;line-height:1; border: 2px solid #0000001F"></textarea>
       <button id="btn-${this.index}" style="border: none;
                                             background: none;
                                             cursor: pointer;
                                             margin: 0;
                                             padding: 0;
                                             margin-left:5px;
-                                            color:blue;">
+                                            color:#1F7A54;">
         <span class="material-icons" >delete</span>
       </button>
     `; 
@@ -216,14 +218,14 @@ export class TestComponent implements OnInit,AfterViewInit{
     row.className = `row-${this.ansIndex}`; 
     row.style.marginBottom = "12px";
     row.innerHTML = ` 
-      <textarea type="text" id="input-${this.ansIndex}" style="width:278px; height:34px;resize:none;  font-size:20px;scrollbar-width: none;line-height:1"></textarea>
+      <textarea type="text" id="input-${this.ansIndex}" style="width:278px;padding:5px; height:34px;resize:none;  font-size:20px;scrollbar-width: none;line-height:1; border: 2px solid #0000001F"></textarea>
       <button id="btn-${this.ansIndex}" style="border: none;
                                                 background: none;
                                                 cursor: pointer;
                                                 margin: 0;
                                                 padding: 0;
                                                 margin-left:5px;
-                                                color:blue;" >
+                                                color:#1F7A54;" >
       <span class="material-icons span" >delete</span></button>
     `;
     const inputElement = row.querySelector(`#input-${this.ansIndex}`) as HTMLInputElement;
@@ -282,7 +284,7 @@ export class TestComponent implements OnInit,AfterViewInit{
     console.log("deleted One: ",this.deltedObject);
     if(this.deltedObject[1] == "stimulus"){
       for(let [k,v] of this.matchedPairs){
-        if((k[0] == 300 && k[2] == this.deltedObject[0]) || (v[0] == 300 && v[2] == this.deltedObject[0])){
+        if((k[0] == this.stimulusStartXCircle && k[2] == this.deltedObject[0]) || (v[0] == this.stimulusStartXCircle && v[2] == this.deltedObject[0])){
           this.matchedPairs.delete(k);
           this.removeIncluded(k);
           this.removeIncluded(v);
@@ -294,7 +296,7 @@ export class TestComponent implements OnInit,AfterViewInit{
       }
     }else{
       for(let [k,v] of this.matchedPairs){
-        if((k[0] == 500 && k[2] == this.deltedObject[0]) || (v[0] == 500 && v[2] == this.deltedObject[0])){
+        if((k[0] == this.responseStartX && k[2] == this.deltedObject[0]) || (v[0] == this.responseStartX && v[2] == this.deltedObject[0])){
           this.matchedPairs.delete(k);
           this.removeIncluded(k);
           this.removeIncluded(v);
@@ -308,7 +310,7 @@ export class TestComponent implements OnInit,AfterViewInit{
     let newlyAdded = new Map();
     if(this.deltedObject[1] == "stimulus"){
       for(let [k,v] of this.matchedPairs){
-        if((k[0] == 300 && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
+        if((k[0] == this.stimulusStartXCircle && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
           this.matchedPairs.delete(k);
           this.removeIncluded(k);
           let key = [k[0],k[1]-40,k[2]];
@@ -320,7 +322,7 @@ export class TestComponent implements OnInit,AfterViewInit{
           this.matchedPairs.set(key,v);
           this.included.push(key);
           newlyAdded.set(key,v);
-        }else if(v[0] == 300 && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
+        }else if(v[0] == this.stimulusStartXCircle && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
           console.log("down");
           this.matchedPairs.delete(k);
           this.removeIncluded(v);
@@ -337,7 +339,7 @@ export class TestComponent implements OnInit,AfterViewInit{
       }
     }else{
       for(let [k,v] of this.matchedPairs){
-        if((k[0] == 500 && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
+        if((k[0] == this.responseStartX && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
           this.matchedPairs.delete(k);
           this.removeIncluded(k);
           let key = [k[0],k[1]-40,k[2]];
@@ -349,7 +351,7 @@ export class TestComponent implements OnInit,AfterViewInit{
           this.matchedPairs.set(key,v);
           this.included.push(key);
           newlyAdded.set(key,v);
-        }else if(v[0] == 500 && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
+        }else if(v[0] == this.responseStartX && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
           this.matchedPairs.delete(k);
           this.removeIncluded(v);
           let value = [v[0],v[1]-40,v[2]];
@@ -374,7 +376,6 @@ export class TestComponent implements OnInit,AfterViewInit{
     let temp = numb!.join("");
     let id = parseInt(temp);
     const inputValue = (event.target as HTMLInputElement).value;
-    console.log(inputValue);
     if(which == "answer"){
       this._answer.set(id,inputValue);
     }else{
@@ -387,9 +388,9 @@ export class TestComponent implements OnInit,AfterViewInit{
   draw(){
     let c = document.querySelector('canvas');
     let context = c?.getContext("2d");
-    c!.width = 800;
+    c!.width = 849
     c!.height = this.canvasHeight;
-    c!.style.width = "800px";
+    c!.style.width = "849px";
     // c!.style.height = this.canvasHeight;
     this.oldlist = this.modelList;
     this.drawCanvas(context);
@@ -402,8 +403,8 @@ export class TestComponent implements OnInit,AfterViewInit{
 
   }
   drawCanvas(context: CanvasRenderingContext2D | null | undefined){
-    let x = 0;
-    let y = 10;
+    let x = this.stimulusStartX;
+    let y = this.stimulusStartY;
     this.questionIds = 1;
     this.modelList = [];
     let arr = Array.from(this._question.values());
@@ -420,8 +421,8 @@ export class TestComponent implements OnInit,AfterViewInit{
   }
 
   drawCanvasAns(context: CanvasRenderingContext2D | null | undefined){
-    let x = 500;
-    let y = 10;
+    let x = this.responseStartX;
+    let y = this.responseStartY;
     let arr = Array.from(this._answer.values());
     this.ansIds = 1;
     for(let i=0;i<arr.length;i++){
@@ -452,7 +453,7 @@ export class TestComponent implements OnInit,AfterViewInit{
   drawCircle(context:  CanvasRenderingContext2D | null | undefined,x:number,y:number){
     context?.beginPath();
     context?.arc(x,y,this.radius,0,360);
-    context!.fillStyle = "blue"
+    context!.fillStyle = "#1F7A54"
     context?.fill();
   }
 
@@ -460,7 +461,7 @@ export class TestComponent implements OnInit,AfterViewInit{
     context!.beginPath();
     context!.moveTo(x1, y1);
     context!.lineTo(x2, y2);
-    context!.strokeStyle = "blue";
+    context!.strokeStyle = "#1F7A54";
     context!.lineWidth = 2;
     context!.stroke();
   }

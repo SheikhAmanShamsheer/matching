@@ -42,7 +42,7 @@ footer {
       color: #616161;
       font-size: 12px;
       font-weight: 500px;
-      margin-top: 16px;
+      /* margin-top: 16px; */
       display: flex;
       justify-content: center;
       align-items: center;
