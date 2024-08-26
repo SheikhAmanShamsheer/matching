@@ -1,18 +1,16 @@
 .topBanner{
     width: 900px; 
-    margin: 30px auto 480px auto;
+    margin: 30px auto 0px auto;
     display: flex;
     justify-content: space-between;
     background-color: white;
     /* padding: 10px; */
-
 }
 
 .btn{
     height: 30px;
     width: 30px;
     border-radius: 50%;
-    border: 1px solid black;
     color: #2B5642;
     background-color: #3FD28B;
     padding: 2px;
@@ -34,7 +32,105 @@
 
 .topHr{
     width: 450px;
-    /* margin-left: auto;
-    margin-right: auto; */
     margin: auto;
-  }
+}
+
+.section{
+    width: 900px; 
+    margin: 30px auto 50px auto;
+    justify-content: space-between;
+    background-color: white;
+    font-size: 16px;
+}
+
+.section1{
+    width: 900px; 
+    margin: 10px auto 20px auto;
+    justify-content: space-between;
+    background-color: white;
+    font-size: 16px;
+}
+.heading{
+    margin: 0px;
+    padding: 20px;
+}
+
+hr{
+    width: 900px;
+    margin: auto;
+    padding: 0;
+}
+.labelDiv{
+    display: flex;
+    justify-content: space-between;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.bottomHead{
+    padding: 20px;
+}
+
+.indicator{
+    color: #666666;
+    opacity: 1;
+    font-size: 14px;
+    margin-bottom: 20px;
+    margin-top: 20px;
+}
+
+#questionDescription{
+    border: none;
+    border-bottom: 2px solid rgb(198, 198, 198);
+    opacity: 1;
+    width: 60%;
+    outline: none;
+}
+
+#select{
+    width: 45%;
+    height: 50px;
+    border: none;
+    border-bottom: 2px solid rgb(198, 198, 198);
+    opacity: 1;
+    outline: none;
+}
+#select1{
+    width: 30%;
+    height: 50px;
+    border: none;
+    border-bottom: 2px solid rgb(198, 198, 198);
+    opacity: 1;
+    outline: none;
+}
+
+.topDivSelect{
+    width: 60%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.topDivSelect1{
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+}
+
+.singleBtn{
+    background-color: inherit;
+    color: #1F7A54;
+    border: none;
+    outline: none;
+}
+
+.diffSelect2{
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+.subBtn{
+    background-color: #1F7A54;
+    color: white;
+    padding: 5px;
+    margin: 30px auto 60px 45%;
+}

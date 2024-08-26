@@ -100,7 +100,6 @@ input:focus{
   height: 30px;
   width: 30px;
   border-radius: 50%;
-  border: 1px solid black;
   color: #2B5642;
   background-color: #3FD28B;
   padding: 2px;
@@ -119,6 +118,8 @@ input:focus{
 .bottomBody{
   background-color: #fff;
   padding: 30px;
+  width: 900px; 
+  margin: 40px auto 50px auto;
 }
 
 p{
@@ -134,7 +135,7 @@ p{
   opacity: 1;
   width: 20px;
   height: 24px;
-  margin-right: 3px;
+  margin-right: 10px;
 }
 
 .rl{
@@ -166,4 +167,19 @@ label{
   opacity: 0.5;
   width: 24px;
   height: 24px;
+}
+
+.resetDiv{
+  display: flex; 
+}
+
+.resetDiv:hover{
+  cursor: pointer;
+}
+
+.prevBtn{
+  background-color: #1F7A54;
+  color: white;
+  padding: 5px;
+  margin: 30px auto 60px 45%;
 }

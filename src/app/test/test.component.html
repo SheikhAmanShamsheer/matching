@@ -10,7 +10,7 @@
             <span>Question Content</span>
         </div>
     </div>
-    <div class="bottomBody" style="width: 900px; margin: 40px auto 0px auto; ">
+    <div class="bottomBody" >
         <div>
             <div style="display: flex; justify-content: space-between;">
                 <label class="topL" for="">Question(stem)*</label>
@@ -38,7 +38,7 @@
                 <input type="radio" name="option" id="OneToOne" class="rad" checked="checked"><label  for="OneToOne">One To One</label>
             </div>
             <div class="rl">
-                <input type="radio" name="option" id="ManyToMany" class="rad"><label for="ManyToMany" style="margin-left: 5px;">Many To Many</label>
+                <input type="radio" name="option" id="ManyToMany" class="rad"><label for="ManyToMany">Many To Many</label>
             </div>
         </div>
         <!-- <div class="canvasHeaders">
@@ -54,10 +54,12 @@
                     <input type="checkbox" name="shuffle" id="shuffle">
                     <label for="shuffle">Shuffle Responses</label>
                 </div>
-                <div style="display: flex;">
+                <div class="resetDiv" (click)="reset()">
                     <span class="material-icons resetIcon">replay</span><button class="reset" (click)="reset()">reset</button>
                 </div>
             </div>
         </div>
     </div>
+    <button class="prevBtn" routerLink="/properties">Previous</button>
+
 </div>
