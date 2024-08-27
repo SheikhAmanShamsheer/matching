@@ -67,6 +67,7 @@ export class TestComponent implements OnInit,AfterViewInit{
   ngOnInit(): void {
     this.addQuestion();
     this.addAnswer();
+    this.draw();
   }
 
   reset(){
@@ -166,7 +167,6 @@ export class TestComponent implements OnInit,AfterViewInit{
   onMouseMove(e: any) {
     if(this.drawing === 1) {
       this.isMoving = 1;
-      
       let c = document.querySelector('canvas');
       const rect = c?.getBoundingClientRect();
       let x = e.clientX-rect!.left;

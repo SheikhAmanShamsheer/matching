@@ -26,27 +26,27 @@ export class stimulus{
         context.strokeStyle = "#0000001F";
         context?.rect(this.x,this.y,this.width,this.heigth);
         context.stroke();
-        context!.font = "20px Roboto";
+        context!.font = "20px QuickSand";
         let t = this.text.split("\n");
         console.log("t: ",t);
         let y = this.y+this.heigth/2;
         let sy = this.y+this.heigth/2;
+        let h = this.heigth;
         for(let i=0;i<t.length;i++){
-          context.clearRect(this.x,this.y,this.width,this.heigth);
+          context.clearRect(this.x,this.y,this.width,h);
           context.beginPath();
           context.fillStyle = "white";
-          context?.fillRect(this.x,this.y,this.width,this.heigth);
+          context?.fillRect(this.x,this.y,this.width,h);
           context.strokeStyle = "#0000001F";
-          context.rect(this.x,this.y,this.width,this.heigth)
+          context.rect(this.x,this.y,this.width,h)
           context.stroke();
           let s = sy;
           context.fillStyle = "black";
           for(let j=0;j<=i;j++){
             context?.fillText(t[j],this.x+10,s);
             s += 20;
-            // if(j == i) break;
           }
-          this.heigth += 20;
+          if(t.length > 1) h += 20;
         }
         context?.beginPath();
         context.strokeStyle  = "#1F7A54";
@@ -55,7 +55,7 @@ export class stimulus{
     }
   
     settext(){
-        let max = 480;
+        let max = 460;
         let fontSize = 20;
         let newText = "";
         let added = 0;

@@ -36,7 +36,7 @@ export class response{
         context.strokeStyle = "#0000001F";
         context?.rect(this.x+20,this.y,this.width,this.heigth);
         context.stroke();
-        context!.font = "20px Roboto";
+        context!.font = "20px QuickSand";
         let t = this.text.split("\n");
         console.log("t: ",t);
         let y = this.y+this.heigth/2;
@@ -53,10 +53,9 @@ export class response{
           context.fillStyle = "black";
           for(let j=0;j<=i;j++){
             context?.fillText(t[j],this.x+22,s);
-            s += 20;
-            // if(j == i) break;
+            s += 15;
           }
-          this.heigth += 20;
+          if(t.length > 1) this.heigth += 20;
         }
         context?.beginPath();
         context.strokeStyle  = "#1F7A54";
@@ -64,7 +63,7 @@ export class response{
         context?.stroke();
     }
     settext(){
-        let max = 480;
+        let max = 460;
         let fontSize = 20;
         let newText = "";
         let added = 0;

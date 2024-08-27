@@ -5,6 +5,9 @@
         <span class="vertical"></span>
         <p>ID: 12345678</p>
     </div>
-    <button class="exitBtn">EXIT PREVIEW</button>
+    <button class="btn exitBtn" routerLink="/test">EXIT PREVIEW</button>
 </div>
-<canvas class="previewCanvas" ></canvas>
+<div class="canvasDiv">
+    <canvas class="previewCanvas"></canvas>
+    <button class="btn checkBtn" (click)="check()">check</button>
+</div>
