@@ -22,6 +22,13 @@
   cursor: pointer;
 }
 
+.banner{
+  padding: 10px;
+}
+.banner:hover{
+  background-color: #F5F5F5;
+}
+
 .enterquestion{
   width: 840px;
   margin-bottom: 20px;
@@ -111,7 +118,6 @@ input:focus{
   margin: 30px auto 0px auto;
   display: flex;
   background-color: white;
-  padding: 10px;
   /* padding-left: 0px; */
 }
 
@@ -182,4 +188,35 @@ label{
   color: white;
   padding: 5px;
   margin: 30px auto 60px 45%;
+}
+
+.savePreviewSection{
+  width: 900px;
+  margin: 0px auto 0px auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+.headerTopheading{
+  font-size: 20px;
+  color: #222222;
+}
+
+.hthr{
+  margin-left: 20px;
+}
+
+.topBtn{
+  margin: 10px;
+  margin-right: 0px;
+  padding: 10px;
+  background: #E2F8FE 0% 0% no-repeat padding-box;
+  box-shadow: 0px 3px 6px #00000029;
+  border: 1px solid #7994B3;
+  border-radius: 2px;
+  opacity: 1;
+}
+
+.topHeading{
+  margin-top: 20px;
 }

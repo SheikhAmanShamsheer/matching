@@ -1,8 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
-import { Renderer2 } from '@angular/core';
 import { stimulus } from './stimulusModel';
 import { response } from './responseModel';
-import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
+import { DataService } from '../shared/DataService';
 
 @Component({
   selector: 'app-test',
@@ -10,7 +9,7 @@ import { MATERIAL_SANITY_CHECKS } from '@angular/material/core';
   styleUrls: ['./test.component.css']
 })
 export class TestComponent implements OnInit,AfterViewInit{
-
+  isPreview:boolean = false;
   private canvasHeight = 50;
   private _question = new Map();
   private _answer = new Map();
@@ -39,12 +38,11 @@ export class TestComponent implements OnInit,AfterViewInit{
   private numberOfTimes = new Map();
   private stimulusStartX = 10;
   private stimulusStartXCircle = 300+this.stimulusStartX;
-
   private stimulusStartY = 20;
   private responseStartX = 540;
   private responseStartY = 20;
 
-  constructor(private elementRef:ElementRef) {} 
+  constructor(private elementRef:ElementRef,private dataService: DataService) {} 
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.querySelector('canvas')
@@ -52,19 +50,17 @@ export class TestComponent implements OnInit,AfterViewInit{
     this.elementRef.nativeElement.querySelector('canvas')
                                 .addEventListener('mousemove', this.onMouseMove.bind(this));
     const OneToOne = document.querySelector(`#OneToOne`) as HTMLInputElement;
-    console.log(OneToOne.checked);
     const ManyToMany = document.querySelector(`#ManyToMany`) as HTMLInputElement;
-    console.log(ManyToMany.checked);
-    OneToOne.addEventListener('click',(event)=>{
+    OneToOne.addEventListener('click',()=>{
       this.oneToOneChecked = !this.oneToOneChecked;
       this.manyToManyChecked = !this.manyToManyChecked;
       this.reset();
-    })
-    ManyToMany.addEventListener('click',(event)=>{
+    });
+    ManyToMany.addEventListener('click',()=>{
       this.manyToManyChecked = !this.manyToManyChecked;
       this.oneToOneChecked = !this.oneToOneChecked;
       this.reset();
-    })
+    });
   }
 
 
@@ -87,6 +83,7 @@ export class TestComponent implements OnInit,AfterViewInit{
   onMouseDown(e: any) {
     e.preventDefault();
     let c = document.querySelector('canvas');
+    console.log("c: ",c);
     let ctx = c?.getContext("2d");
     const rect = c?.getBoundingClientRect();
     let x = e.clientX-rect?.left!;
@@ -391,7 +388,6 @@ export class TestComponent implements OnInit,AfterViewInit{
     c!.width = 849
     c!.height = this.canvasHeight;
     c!.style.width = "849px";
-    // c!.style.height = this.canvasHeight;
     this.oldlist = this.modelList;
     this.drawCanvas(context);
     this.drawCanvasAns(context);
@@ -464,6 +460,14 @@ export class TestComponent implements OnInit,AfterViewInit{
     context!.strokeStyle = "#1F7A54";
     context!.lineWidth = 2;
     context!.stroke();
+  }
+
+  setDataForPreview(){
+    this.dataService.setQuestion(this._question)
+    this.dataService.setAnswer(this._answer);
+    this.dataService.setdeletedIds(this.deleteIds);
+    this.dataService.setMatchedPairs(this.matchedPairs);
+    this.dataService.setModelList(this.modelList);
   }
 
   

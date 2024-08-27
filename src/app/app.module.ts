@@ -9,20 +9,22 @@ import { FooterModule } from './footer/footer.module';
 import { TestModule } from './test/test.module';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PropertiesModule } from './properties/properties.module';
-// import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { PreviewModule } from './preview/preview.module';
+import { CoreModule } from './shared/core.module';
 @NgModule({
   declarations: [
-    AppComponent,    
+    AppComponent,
   ],
   imports: [
     BrowserModule,
+    CoreModule,
+    PreviewModule,
     PropertiesModule,
     HeaderModule,
     FooterModule,
     TestModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    // NgbModule
   ],
   providers: [],
   bootstrap: [AppComponent]

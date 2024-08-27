@@ -1,4 +1,14 @@
 <div class="body">
+    <div class="savePreviewSection">
+        <div class="topHeading">
+            <span class="headerTopheading">Matching</span>
+            <span class="topL hthr">(Locked)</span>
+        </div>
+        <div class="buttonDiv">
+            <button class="topBtn">Unlock</button>
+            <button class="topBtn" (click)="setDataForPreview()" routerLink="/preview">Save and Preview</button>
+        </div>
+    </div>
     <div class="topBanner">
         <div class="banner" routerLink="/">
             <button class="btn">1</button>
@@ -10,7 +20,7 @@
             <span>Question Content</span>
         </div>
     </div>
-    <div class="bottomBody" >
+    <div class="bottomBody">
         <div>
             <div style="display: flex; justify-content: space-between;">
                 <label class="topL" for="">Question(stem)*</label>
@@ -27,18 +37,21 @@
             <div class="answerInputField"></div>
         </div>
         <div style="display: flex; flex-direction:row; ">
-            <button class="addBtn" (click)="addQuestion()" style="width: 130px; height: 40px; margin-top: 10px;">Add Stimulus</button>
-            <button class="addBtn" (click)="addAnswer()" style="width: 130px; height: 40px; margin-left: 405px; margin-top: 10px;">Add
+            <button class="addBtn" (click)="addQuestion()" style="width: 130px; height: 40px; margin-top: 10px;">Add
+                Stimulus</button>
+            <button class="addBtn" (click)="addAnswer()"
+                style="width: 130px; height: 40px; margin-left: 405px; margin-top: 10px;">Add
                 Response</button>
-                
-            </div>
+        </div>
         <p>Collection Type*</p>
         <div class="mrl">
             <div class="rl">
-                <input type="radio" name="option" id="OneToOne" class="rad" checked="checked"><label  for="OneToOne">One To One</label>
+                <input type="radio" name="option" id="OneToOne" class="rad" checked="checked"><label for="OneToOne">One
+                    To One</label>
             </div>
             <div class="rl">
-                <input type="radio" name="option" id="ManyToMany" class="rad"><label for="ManyToMany">Many To Many</label>
+                <input type="radio" name="option" id="ManyToMany" class="rad"><label for="ManyToMany">Many To
+                    Many</label>
             </div>
         </div>
         <!-- <div class="canvasHeaders">
@@ -55,11 +68,12 @@
                     <label for="shuffle">Shuffle Responses</label>
                 </div>
                 <div class="resetDiv" (click)="reset()">
-                    <span class="material-icons resetIcon">replay</span><button class="reset" (click)="reset()">reset</button>
+                    <span class="material-icons resetIcon">replay</span><button class="reset"
+                        (click)="reset()">reset</button>
                 </div>
             </div>
         </div>
     </div>
-    <button class="prevBtn" routerLink="/properties">Previous</button>
+    <button class="prevBtn"  routerLink="/properties">Previous</button>
 
 </div>

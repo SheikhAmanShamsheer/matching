@@ -12,6 +12,6 @@ import { FormsModule } from '@angular/forms';
     CommonModule,
     PropertiesRoutingModule
   ],
-  exports:[PropertiesComponent,CommonModule,FormsModule]
+  exports:[CommonModule,FormsModule]
 })
 export class PropertiesModule { }
