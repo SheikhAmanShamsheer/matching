@@ -186,56 +186,126 @@ export class PreviewComponent implements OnInit{
     }
   }
 
-  drawCircle(context:  CanvasRenderingContext2D | null | undefined,x:number,y:number){
+  drawCheckedConnections(context:  CanvasRenderingContext2D | null | undefined,arr: Array<any>,color="blue"){
+    // let arr : any = Array.from(connections);
+    console.log(arr);
+    for(let i=0;i<arr.length;i++){
+      let firstPoint = arr[i][0];
+      let secondPoint = arr[i][1];
+      console.log("s & e: ",firstPoint[0],firstPoint[1],secondPoint[0],secondPoint[1]);
+      this.drawCircle(context,firstPoint[0],firstPoint[1],color)
+      this.drawCircle(context,secondPoint[0],secondPoint[1],color)
+      // this.drawCircle(context,firstPoint[0],firstPoint[1],"red");
+      // if(!this.isMoving || i != arr.length-1){
+      //   this.drawCircle(context,secondPoint[0],secondPoint[1],"red");
+      // }
+      this.drawLine(context,firstPoint[0],firstPoint[1],secondPoint[0],secondPoint[1],color);
+    }
+  }
+
+  drawCircle(context:  CanvasRenderingContext2D | null | undefined,x:number,y:number,color="blue"){
     context?.beginPath();
     context?.arc(x,y,this.radius,0,360);
-    context!.fillStyle = "#1F7A54"
+    context!.fillStyle = color // #1F7A54
     context?.fill();
   }
 
-  drawLine(context:  CanvasRenderingContext2D | null | undefined,x1:number,y1:number,x2:number,y2:number){
+  drawLine(context:  CanvasRenderingContext2D | null | undefined,x1:number,y1:number,x2:number,y2:number,color="blue"){
     context!.beginPath();
     context!.moveTo(x1, y1);
     context!.lineTo(x2, y2);
-    context!.strokeStyle = "#1F7A54";
+    context!.strokeStyle = color; // #1F7A54
     context!.lineWidth = 2;
     context!.stroke();
   }
 
 
   check(){
-    console.log("original: ",Array.from(this.matchedPairs));
-    console.log("answer: ",Array.from(this.checkMatchedPairs));
+    // console.log("original: ",this.matchedPairs);
+    // console.log("answer: ",this.checkMatchedPairs);
     let original = Array.from(this.matchedPairs);
     let answer = Array.from(this.checkMatchedPairs);
-    let wrong = false;
-    original.sort(function(a,b) {
-      return a[0]-b[0]
-    });
-    answer.sort(function(a,b) {
-      return a[0]-b[0]
-    });
-    console.log("original: ",original);
-    console.log("answer: ",answer);
-    
-    if(JSON.stringify(original) == JSON.stringify(answer)){
-      alert("matching are right");
-    }else{
-      alert("matching are wrong");
+    // console.log("original array: ",original);
+    // console.log("answer array: ",answer);
+    let ogIndex = new Array();
+    let ogArr = new Array();
+    for(let i=0;i<original.length;i++){
+      let temp = new Array(2);
+      let temp1 = new Array(2);
+      if(original[i][0][0] > original[i][1][0]){
+        temp[0] = original[i][1][2];
+        temp[1] = original[i][0][2];
+        temp1[0] = original[i][1];
+        temp1[1] = original[i][0];
+      }else{
+        temp[0] = original[i][0][2];
+        temp[1] = original[i][1][2];
+        temp1[0] = original[i][0];
+        temp1[1] = original[i][1];
+      }
+      ogIndex.push(temp);
+      ogArr.push(temp1);
     }
-    // for(let i=0;i<original.length;i++){
-    //   for(let j=0;j<answer.length;j++){
-    //     if(original[i] == answer[j]){
+    // console.log("og arr: ",ogArr);
+    let ansIndex = new Array();
+    let ansArr = new Array();
+    for(let i=0;i<answer.length;i++){
+      let temp = new Array(2);
+      let temp1 = new Array(2);
+      if(answer[i][0][0] > answer[i][1][0]){
+        temp[0] = answer[i][1][2];
+        temp[1] = answer[i][0][2];
+        temp1[0] = answer[i][1];
+        temp1[1] = answer[i][0];
+      }else{
+        temp[0] = answer[i][0][2];
+        temp[1] = answer[i][1][2];
+        temp1[0] = answer[i][0];
+        temp1[1] = answer[i][1];
+      }
+      ansIndex.push(temp);
+      ansArr.push(temp1);
+    }
 
-    //     }
+    ogIndex.sort(function(a,b) {
+      return a[0]-b[0];
+    });
+    ogArr.sort(function(a,b) {
+      return a[0][2]-b[0][2];
+    });
+
+    ansIndex.sort(function(a,b) {
+      return a[0]-b[0];
+    });
+    ansArr.sort(function(a,b) {
+      return a[0][2]-b[0][2];
+    });
+    // console.log("ogArr: ",ogArr);
+    // console.log("ansArr: ",ansArr);
+    
+    // for(let i=0;i<ogIndex.length;i++){
+    //   if(JSON.stringify(ansIndex[i]) != JSON.stringify(ogIndex[i])){
+    //     alert("wrong");
     //   }
     // }
-
-    // if(wrong == true){
-    //   alert("matching are wrong");
-    // }else{
-    //   alert("matching are right");
-    // }
+    // alert("right");
+    let right = new Array();
+    let wrong = new Array();
+    let allRight = true;
+    for(let i=0;i<ogArr.length;i++){
+      if(JSON.stringify(ansArr[i]) != JSON.stringify(ogArr[i])){
+        console.log(ansArr[i]);
+        wrong.push(ansArr[i]); // (rigth,wrong)
+      }else{
+        right.push(ansArr[i]); // (rigth,wrong)
+      }
+    }
+    // if(wrong.size > 0) alert("wrong")
+    let c = document.querySelector('canvas');
+    let context = c?.getContext("2d");
+    context?.clearRect(0,0,c!.width,c!.height);
+    this.drawCanvas(context);
+    this.drawCheckedConnections(context,wrong,"red");
+    this.drawCheckedConnections(context,right,"#1F7A54");
   }
 }
-   
