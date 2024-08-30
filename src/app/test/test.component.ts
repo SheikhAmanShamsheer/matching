@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ElementRef } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ElementRef, AfterContentChecked, AfterViewChecked } from '@angular/core';
 import { stimulus } from './stimulusModel';
 import { response } from './responseModel';
 import { DataService } from '../shared/DataService';
@@ -8,14 +8,14 @@ import { DataService } from '../shared/DataService';
   templateUrl: './test.component.html',
   styleUrls: ['./test.component.css']
 })
-export class TestComponent implements OnInit,AfterViewInit{
-  isPreview:boolean = false;
+
+export class TestComponent implements OnInit,AfterViewInit,AfterViewChecked{
   private canvasHeight = 50;
   private _question = new Map();
   private _answer = new Map();
   private index = 1;
   private ansIndex = 1;
-  private canvasIncreaseFactor = 40;
+  private canvasIncreaseFactor = 60;
   private width = 278;
   private heigth = 34;
   private radius = 12;
@@ -41,8 +41,21 @@ export class TestComponent implements OnInit,AfterViewInit{
   private stimulusStartY = 20;
   private responseStartX = 540;
   private responseStartY = 20;
+  private decreaseY = 50;
 
-  constructor(private elementRef:ElementRef,private dataService: DataService) {} 
+  constructor(private elementRef:ElementRef,private dataService: DataService) {
+    
+  } 
+
+  isDisabled(){
+    console.log("checiking.....");
+    return this.matchedPairs.size > 0;
+  }
+
+  ngAfterViewChecked(): void { // I Have used this because the ngAfterViewInit is called only once and when i return from save and preview it is not called
+    console.log("checked");
+    this.draw();
+  }
 
   ngAfterViewInit(): void {
     this.elementRef.nativeElement.querySelector('canvas')
@@ -51,11 +64,13 @@ export class TestComponent implements OnInit,AfterViewInit{
                                 .addEventListener('mousemove', this.onMouseMove.bind(this));
     const OneToOne = document.querySelector(`#OneToOne`) as HTMLInputElement;
     const ManyToMany = document.querySelector(`#ManyToMany`) as HTMLInputElement;
+
     OneToOne.addEventListener('click',()=>{
       this.oneToOneChecked = !this.oneToOneChecked;
       this.manyToManyChecked = !this.manyToManyChecked;
       this.reset();
     });
+
     ManyToMany.addEventListener('click',()=>{
       this.manyToManyChecked = !this.manyToManyChecked;
       this.oneToOneChecked = !this.oneToOneChecked;
@@ -67,8 +82,9 @@ export class TestComponent implements OnInit,AfterViewInit{
   ngOnInit(): void {
     this.addQuestion();
     this.addAnswer();
-    this.draw();
   }
+
+  
 
   reset(){
     this.matchedPairs = new Map();
@@ -84,13 +100,10 @@ export class TestComponent implements OnInit,AfterViewInit{
   onMouseDown(e: any) {
     e.preventDefault();
     let c = document.querySelector('canvas');
-    console.log("c: ",c);
     let ctx = c?.getContext("2d");
     const rect = c?.getBoundingClientRect();
     let x = e.clientX-rect?.left!;
     let y = e.clientY-rect?.top!;
-    console.log("clicked here: ",x,y);
-    console.log("modelList: ",this.modelList);
     for(let i=0;i<this.modelList.length;i++){
       let d = Math.sqrt(((x-this.modelList[i].circleX)**2)+((y-this.modelList[i].circleY)**2));
       if(d < this.modelList[i].radius){
@@ -103,7 +116,6 @@ export class TestComponent implements OnInit,AfterViewInit{
             subArr.length === this.startPoint.length && 
             subArr.every((val: any, index: number) => val === this.startPoint[index])
           );          
-          console.log(exists,this.numberOfTimes.get(JSON.stringify(this.startPoint)),Math.min(this._question.size,this._answer.size));
           if((this.oneToOneChecked && !exists)){
             this.drawing = 1;
             this.matchedPairs.set(this.startPoint,this.startPoint);
@@ -132,7 +144,6 @@ export class TestComponent implements OnInit,AfterViewInit{
             );          
             if(this.oneToOneChecked && !exists){
               this.drawing = 0;
-              console.log("end: ",this.endPoint);
               this.included.push(this.endPoint);
               this.matchedPairs.set(this.startPoint,this.endPoint);
               this.startPoint = new Array(3);
@@ -141,13 +152,11 @@ export class TestComponent implements OnInit,AfterViewInit{
               this.draw();
               break;
             }else if(this.manyToManyChecked && this.numberOfTimes.get(JSON.stringify(this.endPoint))==undefined ? 0 < Math.min(this._question.size,this._answer.size) : this.numberOfTimes.get(JSON.stringify(this.endPoint))  < Math.min(this._question.size,this._answer.size )){
-              console.log("inside else");
               this.drawing = 0;
               console.log("end: ",this.endPoint);
               this.included.push(this.endPoint);
               this.matchedPairs.set(this.startPoint,this.endPoint);
               this.numberOfTimes.set(JSON.stringify(this.endPoint),this.numberOfTimes.get(JSON.stringify(this.endPoint))==undefined ? 1 : this.numberOfTimes.get(JSON.stringify(this.endPoint))+1);
-              console.log("added end: ",this.numberOfTimes);
               this.startPoint = new Array(3);
               this.endPoint = new Array(3);
               this.isMoving = 0;
@@ -177,7 +186,7 @@ export class TestComponent implements OnInit,AfterViewInit{
   }
   
   addQuestion(){ 
-    this._question.set(this.index, "");
+    this._question.set(this.index, " ");
     let row = document.createElement('div');   
     row.className = `row-${this.index}`; 
     row.style.display = "flex";
@@ -190,7 +199,7 @@ export class TestComponent implements OnInit,AfterViewInit{
                                             margin: 0;
                                             padding: 0;
                                             margin-left:5px;
-                                            color:#1F7A54;">
+                                            color: #1F7A54;">
         <span class="material-icons" >delete</span>
       </button>
     `; 
@@ -209,7 +218,7 @@ export class TestComponent implements OnInit,AfterViewInit{
   } 
 
   addAnswer(){ 
-    this._answer.set(this.ansIndex, "");
+    this._answer.set(this.ansIndex, " ");
     let row = document.createElement('div');  
     row.style.display = "flex"; 
     row.className = `row-${this.ansIndex}`; 
@@ -271,14 +280,9 @@ export class TestComponent implements OnInit,AfterViewInit{
     }
     this.canvasHeight -= this.canvasIncreaseFactor;
     this.draw();
-    console.log(this.numberOfTimes);
   }
 
   updateStartAndEnd(){
-    console.log("old: ",this.oldlist);
-    console.log("new: ",this.modelList);
-    console.log("pairs: ",this.matchedPairs);
-    console.log("deleted One: ",this.deltedObject);
     if(this.deltedObject[1] == "stimulus"){
       for(let [k,v] of this.matchedPairs){
         if((k[0] == this.stimulusStartXCircle && k[2] == this.deltedObject[0]) || (v[0] == this.stimulusStartXCircle && v[2] == this.deltedObject[0])){
@@ -310,7 +314,7 @@ export class TestComponent implements OnInit,AfterViewInit{
         if((k[0] == this.stimulusStartXCircle && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
           this.matchedPairs.delete(k);
           this.removeIncluded(k);
-          let key = [k[0],k[1]-40,k[2]];
+          let key = [k[0],k[1]-this.decreaseY,k[2]];
           if(this.manyToManyChecked){
             this.numberOfTimes.set(JSON.stringify(key),this.numberOfTimes.get(JSON.stringify(k))-1);
             this.numberOfTimes.set(JSON.stringify(v),this.numberOfTimes.get(JSON.stringify(v))-1);
@@ -320,10 +324,9 @@ export class TestComponent implements OnInit,AfterViewInit{
           this.included.push(key);
           newlyAdded.set(key,v);
         }else if(v[0] == this.stimulusStartXCircle && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
-          console.log("down");
           this.matchedPairs.delete(k);
           this.removeIncluded(v);
-          let value = [v[0],v[1]-40,v[2]];
+          let value = [v[0],v[1]-this.decreaseY,v[2]];
           if(this.manyToManyChecked){
             this.numberOfTimes.set(JSON.stringify(k),this.numberOfTimes.get(JSON.stringify(k))-1);
             this.numberOfTimes.set(JSON.stringify(value),this.numberOfTimes.get(JSON.stringify(v))-1);
@@ -339,7 +342,7 @@ export class TestComponent implements OnInit,AfterViewInit{
         if((k[0] == this.responseStartX && k[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined)){
           this.matchedPairs.delete(k);
           this.removeIncluded(k);
-          let key = [k[0],k[1]-40,k[2]];
+          let key = [k[0],k[1]-this.decreaseY,k[2]];
           if(this.manyToManyChecked){
             this.numberOfTimes.set(JSON.stringify(key),this.numberOfTimes.get(JSON.stringify(k))-1);
             this.numberOfTimes.set(JSON.stringify(v),this.numberOfTimes.get(JSON.stringify(v))-1);
@@ -351,7 +354,7 @@ export class TestComponent implements OnInit,AfterViewInit{
         }else if(v[0] == this.responseStartX && v[2] > this.deltedObject[0] && newlyAdded.get(k) == undefined){
           this.matchedPairs.delete(k);
           this.removeIncluded(v);
-          let value = [v[0],v[1]-40,v[2]];
+          let value = [v[0],v[1]-this.decreaseY,v[2]];
           if(this.manyToManyChecked){
             this.numberOfTimes.set(JSON.stringify(k),this.numberOfTimes.get(JSON.stringify(k))-1);
             this.numberOfTimes.set(JSON.stringify(value),this.numberOfTimes.get(JSON.stringify(v))-1);
@@ -384,41 +387,52 @@ export class TestComponent implements OnInit,AfterViewInit{
 
   draw(){
     let c = document.querySelector('canvas');
-    let context = c?.getContext("2d");
     c!.width = 849
     c!.height = this.canvasHeight;
     c!.style.width = "849px";
+    c!.style.height = `${this.canvasHeight}px`
+    let context = c?.getContext("2d");
     this.oldlist = this.modelList;
-    this.drawCanvas(context);
+    let h = this.drawCanvas(context);
     this.drawCanvasAns(context);
     if(this.delete){
       this.updateStartAndEnd();
       this.delete = 0;
     }
     this.drawConnections(context);
-
   }
+
   drawCanvas(context: CanvasRenderingContext2D | null | undefined){
     let x = this.stimulusStartX;
     let y = this.stimulusStartY;
     this.questionIds = 1;
     this.modelList = [];
+    let h = 0;
     let arr = Array.from(this._question.values());
     for(let i=0;i<arr.length;i++){
       while(this.deleteIds.includes(this.questionIds)){
         this.questionIds++;
       }
       let s = new stimulus(this.questionIds,x,y,this.width,this.heigth,this.radius,arr[i]);
-      s.draw(context!);
+      h = s.draw(context!);
+      console.log("the new height: ",h);
       this.modelList.push(s);
       this.questionIds++;
-      y += 40;
+      y += this.decreaseY;
+      // if(h == 34){
+      //   y += 50;
+      // }else{
+      //   y += h;
+      // }
     }
+    // return h;
   }
 
-  drawCanvasAns(context: CanvasRenderingContext2D | null | undefined){
+  drawCanvasAns(context: CanvasRenderingContext2D | null | undefined,extra:number=0){
     let x = this.responseStartX;
     let y = this.responseStartY;
+    if(extra == 34) extra = 0;
+    else extra = extra-34;
     let arr = Array.from(this._answer.values());
     this.ansIds = 1;
     for(let i=0;i<arr.length;i++){
@@ -426,10 +440,15 @@ export class TestComponent implements OnInit,AfterViewInit{
         this.ansIds++;
       }
       let r = new response(this.ansIds,x,y,this.width,this.heigth,this.radius,arr[i]);
-      r.draw(context!);
+      let h = r.draw(context!);
       this.modelList.push(r);
       this.ansIds++;
-      y += 40;
+      y += this.decreaseY;
+      // if(h == 34){
+      //   y += 50;
+      // }else{
+      //   y += h;
+      // }
     }
   }
 

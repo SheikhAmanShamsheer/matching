@@ -5,8 +5,8 @@
             <span class="topL hthr">(Locked)</span>
         </div>
         <div class="buttonDiv">
-            <button class="topBtn">Unlock</button>
-            <button class="topBtn" (click)="setDataForPreview()" routerLink="/preview">Save and Preview</button>
+            <button class="topBtn" [disabled] = "!isDisabled()">Unlock</button>
+            <button class="topBtn" (click)="setDataForPreview()" routerLink="/preview" [disabled] = "!isDisabled()">Save and Preview</button>
         </div>
     </div>
     <div class="topBanner">

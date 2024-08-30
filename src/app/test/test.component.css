@@ -99,8 +99,10 @@ input:focus{
 
 .topHr{
   width: 450px;
-  margin-left: auto;
+  /* margin-left: auto;
   margin-right: auto;
+  margin-top: auto; */
+  margin: auto;
 }
 
 .btn{

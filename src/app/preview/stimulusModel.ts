@@ -23,6 +23,7 @@ export class stimulus{
     }
     draw(context:CanvasRenderingContext2D){
         this.settext();
+        context.beginPath();
         context.strokeStyle = "#0000001F";
         context?.rect(this.x,this.y,this.width,this.heigth);
         context.stroke();

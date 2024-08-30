@@ -20,17 +20,7 @@ export class response{
         this.circleX = this.x;
         this.circleY = this.y+15;
     }
-    // draw(context:CanvasRenderingContext2D){
-    //     context?.beginPath();
-    //     context?.arc(this.circleX+0.5,this.circleY+0.5,12,0,360);
-    //     context?.stroke();
-    //     context?.beginPath();
-    //     context!.fillStyle = "black";
-    //     context?.rect(this.x+20,this.y,this.width,this.heigth);
-    //     context!.font = "20px Roboto";
-    //     context?.fillText(this.text,this.x+22,this.y+this.heigth/2);
-    //     context?.stroke();
-    // }
+    
     draw(context:CanvasRenderingContext2D){
         this.settext();
         context.strokeStyle = "#0000001F";
@@ -52,9 +42,9 @@ export class response{
           let s = sy;
           context.fillStyle = "black";
           for(let j=0;j<=i;j++){
-            context?.fillText(t[j],this.x+22,s);
+            if(t[j].length == 0)  continue;
+            context?.fillText(t[j],this.x+32,s);
             s += 20;
-            // if(j == i) break;
           }
           if(t.length > 1) h += 20;
         }
@@ -62,47 +52,49 @@ export class response{
         context.strokeStyle  = "#1F7A54";
         context?.arc(this.circleX,this.circleY,this.radius,0,360);
         context?.stroke();
+        return h;
     }
+
     settext(){
-        let max = 460;
-        let fontSize = 20;
-        let newText = "";
-        let added = 0;
-        let strArr = this.text.split(" ");
-        for(let i=0;i<strArr.length;i++){
-          added += strArr[i].length*fontSize;
-          if(added < max){
-            newText += strArr[i] + " ";
-          }else{
-            if(strArr[i].length*fontSize > max){
-              added = 0;
-              let temp = "";
-              for(let j=0;j<strArr[i].length;j++){
-                added += fontSize;
-                if(added < max){
-                  temp += strArr[i][j];
+      let max = 430;
+      let fontSize = 20;
+      let newText = "";
+      let added = 0;
+      let strArr = this.text.split(" ");
+      for(let i=0;i<strArr.length;i++){
+        
+        added += strArr[i].length*fontSize;
+        if(added < max){
+          newText += strArr[i] + " ";
+        }else{
+          if(strArr[i].length*fontSize > max){
+            added = 0;
+            let temp = "";
+            for(let j=0;j<strArr[i].length;j++){
+              added += fontSize;
+              if(added < max){
+                temp += strArr[i][j];
+              }else{
+                added = 0;
+                if(newText.length == 0){
+                  newText += temp + " ";
                 }else{
-                  added = 0;
-                  if(newText.length == 0){
-                    newText += temp + " ";
-                  }else{
-                    newText += "\n" + temp + " ";
-                  }
-                  temp = "";
+                  newText += "\n" + temp + " ";
                 }
+                temp = "";
               }
-              if(temp.length > 0){
-                newText += "\n" + temp + " ";
-                added = temp.length*fontSize;
-              }
-            }else{
-              newText += "\n" + strArr[i] + " ";
-              added = strArr[i].length*fontSize;
             }
+            if(temp.length > 0){
+              newText += "\n" + temp + " ";
+              added = temp.length*fontSize;
+            }
+          }else{
+            newText += "\n" + strArr[i] + " ";
+            added = strArr[i].length*fontSize;
           }
-        } 
-        // console.log(newText);
-        this.text = newText;
+        }
+      } 
+      this.text = newText;
     }
 
 }

@@ -33,6 +33,7 @@ export class response{
     // }
     draw(context:CanvasRenderingContext2D){
         this.settext();
+        context.beginPath();
         context.strokeStyle = "#0000001F";
         context?.rect(this.x+20,this.y,this.width,this.heigth);
         context.stroke();

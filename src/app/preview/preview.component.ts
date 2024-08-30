@@ -35,19 +35,12 @@ export class PreviewComponent implements OnInit{
     this.deletedIds = this.dataService.getdeletedIds();
     this.modelList = this.dataService.getModelList();
     let c = document.querySelector('.previewCanvas') as HTMLCanvasElement;
-    console.log("c: ",c);
     let context = c?.getContext("2d");
-    console.log("context: ",context);
     c!.width = 849;
     c!.style.width = "849px"
     let changed = this.canvasHeight + 20*Math.max(this._answers.size,this._question.size);
     if(changed < this.canvasHeight) c!.height = this.canvasHeight;
     else c!.height = changed;
-    console.log(this._answers);
-    console.log(this._question);
-    console.log(this.matchedPairs);
-    console.log(this.deletedIds);
-    console.log("model List: ",this.modelList);
     this.drawCanvas(context);
     
   }
@@ -62,13 +55,10 @@ export class PreviewComponent implements OnInit{
   onMouseDown(e: any) {
     e.preventDefault();
     let c = document.querySelector('canvas');
-    console.log("c: ",c);
     let ctx = c?.getContext("2d");
     const rect = c?.getBoundingClientRect();
     let x = e.clientX-rect?.left!;
     let y = e.clientY-rect?.top!;
-    console.log("clicked here: ",x,y);
-    console.log("modelList: ",this.modelList);
     for(let i=0;i<this.modelList.length;i++){
       let d = Math.sqrt(((x-this.modelList[i].circleX)**2)+((y-this.modelList[i].circleY)**2));
       if(d < this.modelList[i].radius){
@@ -76,12 +66,10 @@ export class PreviewComponent implements OnInit{
           this.startPoint[0] = this.modelList[i].circleX;
           this.startPoint[1] = this.modelList[i].circleY;
           this.startPoint[2] = this.modelList[i].id;
-          console.log("start: ",this.startPoint);
           const exists = this.included.some(subArr => 
             subArr.length === this.startPoint.length && 
             subArr.every((val: any, index: number) => val === this.startPoint[index])
           );          
-          console.log(exists,this.numberOfTimes.get(JSON.stringify(this.startPoint)),Math.min(this._question.size,this._answer.size));
           if((this.oneToOneChecked && !exists)){
             this.drawing = 1;
             this.checkMatchedPairs.set(this.startPoint,this.startPoint);
@@ -93,7 +81,6 @@ export class PreviewComponent implements OnInit{
             this.checkMatchedPairs.set(this.startPoint,this.startPoint);
             this.included.push([...this.startPoint]);
             this.numberOfTimes.set(JSON.stringify(this.startPoint),this.numberOfTimes.get(JSON.stringify(this.startPoint))==undefined ? 1 : this.numberOfTimes.get(JSON.stringify(this.startPoint))+1);
-            console.log("added: ",this.numberOfTimes);
             this.draw();
             break;
           }else{
@@ -110,7 +97,6 @@ export class PreviewComponent implements OnInit{
             );          
             if(this.oneToOneChecked && !exists){
               this.drawing = 0;
-              console.log("end: ",this.endPoint);
               this.included.push(this.endPoint);
               this.checkMatchedPairs.set(this.startPoint,this.endPoint);
               this.startPoint = new Array(3);
@@ -119,13 +105,10 @@ export class PreviewComponent implements OnInit{
               this.draw();
               break;
             }else if(this.manyToManyChecked && this.numberOfTimes.get(JSON.stringify(this.endPoint))==undefined ? 0 < Math.min(this._question.size,this._answer.size) : this.numberOfTimes.get(JSON.stringify(this.endPoint))  < Math.min(this._question.size,this._answer.size )){
-              console.log("inside else");
               this.drawing = 0;
-              console.log("end: ",this.endPoint);
               this.included.push(this.endPoint);
               this.checkMatchedPairs.set(this.startPoint,this.endPoint);
               this.numberOfTimes.set(JSON.stringify(this.endPoint),this.numberOfTimes.get(JSON.stringify(this.endPoint))==undefined ? 1 : this.numberOfTimes.get(JSON.stringify(this.endPoint))+1);
-              console.log("added end: ",this.numberOfTimes);
               this.startPoint = new Array(3);
               this.endPoint = new Array(3);
               this.isMoving = 0;
@@ -138,7 +121,6 @@ export class PreviewComponent implements OnInit{
           
         }
       }else{
-        console.log("outside")
       }
     }
   }
@@ -155,7 +137,6 @@ export class PreviewComponent implements OnInit{
     }
   }
 
-
   draw(){
     let c = document.querySelector('canvas');
     let context = c?.getContext("2d");
@@ -166,12 +147,12 @@ export class PreviewComponent implements OnInit{
     this.drawConnections(context);
 
   }
+
   drawCanvas(context: CanvasRenderingContext2D | null | undefined){
     for(let i=0;i<this.modelList.length;i++){
       this.modelList[i].draw(context);
     }
   }
-
 
   drawConnections(context:  CanvasRenderingContext2D | null | undefined){
     let arr : any = Array.from(this.checkMatchedPairs);
@@ -187,18 +168,11 @@ export class PreviewComponent implements OnInit{
   }
 
   drawCheckedConnections(context:  CanvasRenderingContext2D | null | undefined,arr: Array<any>,color="blue"){
-    // let arr : any = Array.from(connections);
-    console.log(arr);
     for(let i=0;i<arr.length;i++){
       let firstPoint = arr[i][0];
       let secondPoint = arr[i][1];
-      console.log("s & e: ",firstPoint[0],firstPoint[1],secondPoint[0],secondPoint[1]);
       this.drawCircle(context,firstPoint[0],firstPoint[1],color)
       this.drawCircle(context,secondPoint[0],secondPoint[1],color)
-      // this.drawCircle(context,firstPoint[0],firstPoint[1],"red");
-      // if(!this.isMoving || i != arr.length-1){
-      //   this.drawCircle(context,secondPoint[0],secondPoint[1],"red");
-      // }
       this.drawLine(context,firstPoint[0],firstPoint[1],secondPoint[0],secondPoint[1],color);
     }
   }
@@ -212,21 +186,18 @@ export class PreviewComponent implements OnInit{
 
   drawLine(context:  CanvasRenderingContext2D | null | undefined,x1:number,y1:number,x2:number,y2:number,color="blue"){
     context!.beginPath();
+    if(color == "red") context?.setLineDash([10,15])
     context!.moveTo(x1, y1);
     context!.lineTo(x2, y2);
     context!.strokeStyle = color; // #1F7A54
     context!.lineWidth = 2;
     context!.stroke();
+    if(color == "red") context!.setLineDash([])
   }
 
-
   check(){
-    // console.log("original: ",this.matchedPairs);
-    // console.log("answer: ",this.checkMatchedPairs);
     let original = Array.from(this.matchedPairs);
     let answer = Array.from(this.checkMatchedPairs);
-    // console.log("original array: ",original);
-    // console.log("answer array: ",answer);
     let ogIndex = new Array();
     let ogArr = new Array();
     for(let i=0;i<original.length;i++){
@@ -246,7 +217,6 @@ export class PreviewComponent implements OnInit{
       ogIndex.push(temp);
       ogArr.push(temp1);
     }
-    // console.log("og arr: ",ogArr);
     let ansIndex = new Array();
     let ansArr = new Array();
     for(let i=0;i<answer.length;i++){
@@ -280,32 +250,31 @@ export class PreviewComponent implements OnInit{
     ansArr.sort(function(a,b) {
       return a[0][2]-b[0][2];
     });
-    // console.log("ogArr: ",ogArr);
-    // console.log("ansArr: ",ansArr);
-    
-    // for(let i=0;i<ogIndex.length;i++){
-    //   if(JSON.stringify(ansIndex[i]) != JSON.stringify(ogIndex[i])){
-    //     alert("wrong");
-    //   }
-    // }
-    // alert("right");
     let right = new Array();
     let wrong = new Array();
-    let allRight = true;
     for(let i=0;i<ogArr.length;i++){
       if(JSON.stringify(ansArr[i]) != JSON.stringify(ogArr[i])){
-        console.log(ansArr[i]);
         wrong.push(ansArr[i]); // (rigth,wrong)
       }else{
         right.push(ansArr[i]); // (rigth,wrong)
       }
     }
-    // if(wrong.size > 0) alert("wrong")
     let c = document.querySelector('canvas');
     let context = c?.getContext("2d");
     context?.clearRect(0,0,c!.width,c!.height);
+    this.reset();
     this.drawCanvas(context);
     this.drawCheckedConnections(context,wrong,"red");
     this.drawCheckedConnections(context,right,"#1F7A54");
+  }
+
+  reset(){
+    this.startPoint = new Array(3);
+    this.endPoint = new Array(3);
+    this.included = new Array();
+    this.numberOfTimes = new Map();
+    this.drawing = 0;
+    this.checkMatchedPairs = new Map();
+    this.draw();
   }
 }
